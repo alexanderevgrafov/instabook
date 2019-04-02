@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "pretty": true,
+        "resolveJsonModule": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "module": "commonjs",
@@ -9,10 +10,14 @@
         "jsx": "react",
         "moduleResolution": "node",
         "sourceMap": true,
-        "outDir": "./dist",
+        "outDir": "./server",
         "alwaysStrict": true,
         "allowJs": true
     },
+
+    "include": [
+        "./src/server/central.ts"
+],
 
     "exclude": [
         "node_modules",
