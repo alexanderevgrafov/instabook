@@ -53,11 +53,11 @@ let config = {
     resolve: {
         modules   : [ 'node_modules' ],
         alias     : {
-            pages : path.resolve( __dirname, 'resources', 'js', 'pages' ),
-            css   : path.resolve( __dirname, 'resources', 'js', 'css' ),
-            base  : path.resolve( __dirname, 'resources', 'js', 'base' ),
-            models: path.resolve( __dirname, 'resources', 'js', 'models' ),
-            ui    : path.resolve( __dirname, 'resources', 'js', 'ui' )
+//            pages : path.resolve( __dirname, 'resources', 'js', 'pages' ),
+//            css   : path.resolve( __dirname, 'resources', 'js', 'css' ),
+//            base  : path.resolve( __dirname, 'resources', 'js', 'base' ),
+//            models: path.resolve( __dirname, 'resources', 'js', 'models' ),
+            ui    : path.resolve( __dirname, 'src', 'js', 'ui' )
         },
         extensions: [ '.ts', '.js', '.jsx' ]
     },
