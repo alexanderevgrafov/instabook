@@ -1,18 +1,33 @@
 import * as socketio from 'socket.io'
 import * as _ from 'underscore'
+import * as socket_api from './socket_api'
+import {Session} from "./Session";
+
 const path = require('path');
 //import * as fs from "fs"
 
 import config from './config.js'
+
 _.extend(process.env, config || {}, require('dotenv').config().parsed || {});
 
-const fastify = require('fastify')({logger: true});
-const ws = socketio.listen( process.env.ws_server_port );
+const fastify = require('fastify')();
+const ws = socketio.listen(process.env.ws_server_port);
 
-fastify.register(require('fastify-static'), {
-    root: path.join(__dirname, '../public'),
-    prefix: '/'
-});
+fastify
+    .register(require('fastify-static'), {
+        root: path.join(__dirname, '../public'),
+        prefix: '/'
+    })
+    .register(require('fastify-cookie'))
+    .register(require('fastify-caching'))
+    .register(require('fastify-server-session'), {
+        secretKey: 'qscvefbnrgm,rghjthjk1122342345qscvefbnrgm,rghjthjkl678qscvefbnrgm,rghjthjkll',
+        sessionMaxAge: 900000, // 15 minutes in milliseconds
+        cookie: {
+//            domain: '.example.com',
+            path: '/'
+        }
+    });
 
 fastify.get('/api/*', (request, reply) => {
     reply.send({hello: 'world ' + request.params['*']})
@@ -29,24 +44,11 @@ const start = async () => {
     }
 };
 
+ws.on('connection', socket => {
+    const session = new Session({socket});
 
-//console.log(process.env.ip_addr);
-//
-
-ws.on( 'connection', socket =>{
-    socket.on( 'disconnect', () => console.log( 'WS client is disconnected' ) );
-    console.log( 'WS client is connected' );
-
-    /*--------- Client connected ------------------*/
-    socket.on( 'hola', data =>{
-        console.log( 'Hola from', data );
-    } );
-
-    socket.on( 'login', data =>{
-        console.log( 'Login', data );
-    } );
-
-} );
-
+    console.log('WS client is connected');
+    _.mapObject(socket_api, (method, name) => socket.on(name, data => method(session, data)));
+});
 
 start();
