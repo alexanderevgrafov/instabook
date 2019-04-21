@@ -13,6 +13,8 @@ let ws;
 
 import '../../sass/app.scss'
 
+const server_path = (config.ws_server_addr || 'http://localhost') + ':' + config.ws_server_port;
+
 @define
 class InstaUser extends Record {
     static attributes = {
@@ -172,7 +174,61 @@ class ApplicationState extends Record {
         folders : InstaFolder.Collection,
 
         folder : shared( InstaFolder )
+    };
 
+    ws = null;
+
+    queue = {};
+
+    counter = 0;
+
+    ws_init() {
+        const { server } = this;
+
+        this.ws = socketIOClient( server_path );
+
+        this.ws.on( 'connect', () => {
+                server.set( {
+                    connected          : true,
+                    reconnect_after    : 0,
+                    reconnect_attempts : 0
+                } );
+            } )
+            .on( 'close', () => {
+                console.log( 'Disconnected from server. Reconnection in ' + medialon.reconnectAfter + ' seconds...' );
+                server.connected = false;
+                server.reconnect_attempts++;
+
+                window.setTimeout( config.ws_reconnect_delay * 1000 * server.reconnect_attempts,
+                    () => {
+                        ws.connect( server_path );
+                    } );
+            } )
+            .on( 'answer', data => {
+                if( data.__sig && this.queue[ data.__sig ] ) {
+                    const [ resolve, reject ] = this.queue[ data.__sig ];
+
+                    if( data.__status === 'ok' ) {
+                        resolve( data.answer );
+                    } else {
+                        reject( data.msg );
+                    }
+                    delete (this.queue[ data.__sig ]);
+
+                } else {
+                    console.error( 'WS answer with unknown sig: ', data );
+                }
+            } )
+    }
+
+    io( command, params ) {
+        !this.ws && this.ws_init();
+
+        return new Promise( ( resolve, reject ) => {
+            const signature = 'sig' + this.counter++;
+            this.ws.emit( command, { signature, params } );
+            this.queue[ signature ] = [ resolve, reject ];
+        } );
     }
 }
 
@@ -191,72 +247,41 @@ export class Application extends React.Component {
     static state = ApplicationState;
 
     componentWillMount() {
-        const { server }  = this.state,
-              server_path = (config.ws_server_addr || 'http://localhost') + ':' + config.ws_server_port;
+//        const { ws } = this.state;
 
-        ws = socketIOClient( server_path );
-        ws.on( 'connect', () => {
-                server.set( {
-                    connected          : true,
-                    reconnect_after    : 0,
-                    reconnect_attempts : 0
-                } );
-            } )
-            .on( 'close', () => {
-                console.log( 'Disconnected from server. Reconnection in ' + medialon.reconnectAfter + ' seconds...' );
-                server.connected = false;
-                server.reconnect_attempts++;
-
-                window.setTimeout( config.ws_reconnect_delay * 1000 * server.reconnect_attempts,
-                    () => {
-                        ws.connect( server_path );
-                    } );
-            } )
-            .on( 'answer', this.onWsAnswer )
-        ;
-
-        ws.emit( 'hola', 'Shark' );
+        this.state.io( 'hola', 'Shark' ).then(
+            () => console.log( 'on hola' )
+        );
     }
 
     onInstLogin = () => {
-        const { name, pwd } = this.state.user;
-        ws.emit( 'login', { name, pwd } );
+        const { user }      = this.state,
+              { name, pwd } = user;
+        this.state.io( 'login', { name, pwd } ).then(
+            () => user.logged = true
+        ).catch(err=>alert('Login error: ' + err));
     };
 
     onShowFolders = () => {
-        ws.emit( 'cmd', { cmd : 'folders' } );
-    };
+        const { folders } = this.state;
 
-    onWsAnswer = data => {
-        const { user, folders } = this.state;
-
-        console.log( 'WS Answer', data );
-
-        if( data.status === 'ok' ) {
-            switch( data.command ) {
-                case 'login':
-                    user.logged = true;
-                    break;
-                case 'folders':
-                    folders.add( data.items, { parse : true } );
-                    break;
-                case 'folder_content':
-                    const folder = folders.get( data.collection_id );
-
-                    if( folder ) {
-                        folder.items.add( data.items, { parse : true } );
-                    }
-
-                    break;
-            }
-        } else {
-            alert( 'Status of answer is not OK' );
-        }
+        this.state.io( 'cmd', { cmd : 'folders' } ).then(
+            data => folders.add( data.items, { parse : true } )
+        );
     };
 
     onFolderClick( folder ) {
         this.state.folder = folder;
-        ws.emit( 'cmd', { cmd : 'folder_content', args : [ folder.collection_id ] } );
+        this.state.io( 'cmd', { cmd : 'folder_content', args : [ folder.collection_id ] } ).then(
+            data => {
+                const { folders } = this.state,
+                      folder      = folders.get( data.collection_id );
+
+                if( folder ) {
+                    folder.items.add( data.items, { parse : true } );
+                }
+            }
+        );
     }
 
     onFolderItemClick( folder ) {

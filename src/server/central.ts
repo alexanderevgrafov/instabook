@@ -48,7 +48,21 @@ ws.on('connection', socket => {
     const session = new Session({socket});
 
     console.log('WS client is connected');
-    _.mapObject(socket_api, (method, name) => socket.on(name, data => method(session, data)));
+    _.mapObject(socket_api, (method, name) =>
+        socket.on(name, data => {
+                const result = method(session, data.params);
+
+                try {
+                    result && result.then && result
+                        .then(obj => session.ws_success(data, obj))
+                        .catch(err=>{
+                            session.ws_error(data, err);
+                        })
+                } catch (err) {
+                    session.ws_error(data, err);
+                }
+            }
+        ));
 });
 
 start();

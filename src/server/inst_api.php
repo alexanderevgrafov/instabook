@@ -6,7 +6,7 @@ date_default_timezone_set('UTC');
 require __DIR__ . '/../../vendor/autoload.php';
 
 function exceptionJson( \Exception $e ) {
-    echo '{"error":"' . $e->getMessage() . '"}';
+    echo '{"error_message":"' . addslashes($e->getMessage()) . '"}';
     exit(0);
 }
 $debug = false;
