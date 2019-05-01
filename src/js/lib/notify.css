@@ -1,0 +1,108 @@
+.notify {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: auto;
+}
+
+/* Positions
+========================================================================== */
+.notify-top-right,
+.notify-bottom-right {
+  left: auto;
+  right: 10px;
+}
+.notify-top-center,
+.notify-bottom-center {
+  left: 50%;
+  width:900px;
+  margin-left:-450px;
+}
+.notify-bottom-left,
+.notify-bottom-right,
+.notify-bottom-center {
+  top: auto;
+  bottom: 10px;
+}
+
+/* Responsiveness
+========================================================================== */
+/* Phones portrait and smaller */
+@media (max-width: 900px) {
+  /*
+     * Fit in small screen
+     */
+  .notify {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    margin: 0;
+  }
+}
+
+/* Sub-object: `notify-message`
+========================================================================== */
+.notify-message {
+  position: relative;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 0px 18px 2px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 18px 2px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 18px 2px rgba(0,0,0,0.75);
+  color: #fff;
+  border: 1px solid #9BA5A8;
+  margin-bottom: 8px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px 26px 7px 7px;
+}
+
+.notify .notify-message div{
+  position: relative;
+  cursor: pointer;
+}
+.notify .notify-message.notify-default div {cursor: default;}
+
+.notify .notify-message a {
+  color: white;
+  text-decoration: underline;
+}
+
+.notify button.close{
+  display: inline-block;
+  position: absolute;
+  right: 5px;
+  top: 6px;
+  background-color: transparent;
+  font-size: 14px;
+  color: inherit;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.notify .alert-default {
+  background-color: #fff;
+}
+
+.notify .alert-info{
+  background-color: #31b0d5;
+}
+
+.notify .alert-danger{
+  background-color: red;
+  border-color: red;
+}
+
+.notify .alert-warning{
+  background-color: #ec971f;
+  border-color: #d58512;
+}
+
+.notify .alert-success{
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}

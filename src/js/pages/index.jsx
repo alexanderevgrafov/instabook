@@ -1,162 +1,22 @@
 //import 'type-r/globals'
-import React from 'react-type-r'
+import React, { Link } from 'react-type-r'
 import { Record, shared, type, predefine, define } from 'type-r'
-import { Timestamp } from 'type-r/ext-types'
+//import { Timestamp } from 'type-r/ext-types'
 import * as socketIOClient from 'socket.io-client';
-import { Route, Switch } from 'react-router'
-import { BrowserRouter } from 'react-router-dom'
+//import { Route, Switch } from 'react-router'
+//import { BrowserRouter } from 'react-router-dom'
 import { Input, Button } from 'ui/Controls'
+import Page from 'app/Page'
 import config from '../../server/config'
+import { InstaFolder } from '../models/InstaModels'
 
 let ws;
 //import 'bootstrap/dist/css/bootstrap.min.css'
 
 import '../../sass/app.scss'
+import { Checkbox } from 'react-type-r/tags';
 
 const server_path = (config.ws_server_addr || 'http://localhost') + ':' + config.ws_server_port;
-
-@define
-class InstaUser extends Record {
-    static attributes = {
-        allowed_commenter_type        : '',
-        can_boost_post                : false,
-        can_see_organic_insights      : false,
-        full_name                     : '',
-        has_anonymous_profile_picture : true,
-        is_private                    : false,
-        is_unpublished                : false,
-        is_verified                   : false,
-        pk                            : '',
-        profile_pic_url               : '',
-        reel_auto_archive             : 'unset',
-        show_insights_terms           : false,
-        username                      : '',
-    }
-}
-
-@define
-class InstaImageVersion extends Record {
-    static attributes = {
-        width  : 0,
-        height : 0,
-        url    : ''
-    };
-
-    static collection = {
-        comparator : 'width',
-        small() {
-            return this.at( 0 );
-        },
-        parse( data ) {
-            return data.candidates
-        }
-    }
-}
-
-@define
-class InstaCaption extends Record {
-    static attributes = {
-        bit_flags          : 0,
-        content_type       : '',
-//        created_at         : type( Timestamp ),
-//        created_at_utc     : type( Timestamp ),
-        did_report_as_spam : false,
-        has_translation    : true,
-        media_id           : 0,
-        pk                 : 0,
-        share_enabled      : false,
-        status             : 'Active',
-        text               : '',
-        type               : 0,
-        user_id            : 0
-    }
-}
-
-@predefine
-@define
-class InstaMedia extends Record {
-    static attributes = {
-        id                   : '',
-        image_versions2      : InstaImageVersion.Collection,
-        media_type           : 0,  // 1-Photo, 2 - video  8-carousel
-        carousel_media_count : 4,
-        carousel_media       : InstaMedia.Collection,
-        // can_view_more_preview_comments    : false,
-        // can_viewer_reshare                : true,
-        // can_viewer_save                   : true,
-        caption              : InstaCaption,
-        // caption_is_edited                 : false,
-        // client_cache_key                  : '',
-        // code                              : '',
-        comment_count        : 0,
-        // comment_likes_enabled             : true,
-        // comment_threading_enabled         : true,
-        device_timestamp     : 0,
-        // filter_type                       : 0,
-        // has_audio                         : true,
-        // has_liked                         : false,
-        // has_more_comments                 : false,
-        // has_viewer_saved                  : true,
-        // inline_composer_display_condition : '',
-        // is_dash_eligible                  : 1,
-        // lat                               : 0,
-        // lng                               : 0,
-        like_count           : 0,
-//        likers: (5) [{…}, {…}, {…}, {…}, {…}]
-//        location: {pk: "213063425", name: "Arambol, Goa, India", address: "", city: "", short_name: "Arambol", …}
-//         max_num_visible_preview_comments  : 0,
-//         number_of_qualities               : 1,
-//         organic_tracking_token            : '',
-        original_height      : 0,
-        original_width       : 0,
-        // photo_of_you                      : false,
-        // pk                                : '',
-        // preview_comments                  : [],
-        // saved_collection_ids              : [ '18023306578072901' ],
-        taken_at             : 0,
-        user                 : InstaUser,
-        video_codec          : '',
-//video_dash_manifest: ""
-        video_duration       : 0,
-//video_versions: (3) [{…}, {…}, {…}],
-        view_count           : 0
-    };
-
-    get quickURL() {
-        const small = this.image_versions2.small();
-
-        return small ? small.url : '';
-    }
-
-}
-
-@define
-class InstaFolderItem extends Record {
-    static attributes = {
-        media : InstaMedia
-    }
-}
-
-@define
-class InstaFolder extends Record {
-    static idAttribute = 'collection_id';
-
-    static attributes = {
-        collection_id          : '',
-        collection_media_count : 0,
-        collection_name        : '',
-        collection_type        : '',
-        cover_media            : InstaMedia,
-
-        items : InstaFolderItem.Collection
-    };
-
-    // get coverURL() {
-    //     const small = this.cover_media.image_versions2.small();
-    //
-    //     return small ? small.url : '';
-    // }
-}
 
 @define
 class ApplicationState extends Record {
@@ -167,13 +27,13 @@ class ApplicationState extends Record {
             reconnect_attempts : 0
         } ),
         user    : Record.defaults( {
-            name   : 'alexander.evgrafov',
-            pwd    : 'lokkol123',   //bp8djx408122
+            name   : 'sveta.evgrafova',//'alexander.evgrafov',  //
+            pwd    : 'bp8djx408122',//'lokkol123',   //
             logged : false
         } ),
         folders : InstaFolder.Collection,
 
-        folder : shared( InstaFolder )
+        open_folder : shared( InstaFolder )
     };
 
     ws = null;
@@ -224,8 +84,9 @@ class ApplicationState extends Record {
     io( command, params ) {
         !this.ws && this.ws_init();
 
+        const signature = 'sig' + this.counter++;
+
         return new Promise( ( resolve, reject ) => {
-            const signature = 'sig' + this.counter++;
             this.ws.emit( command, { signature, params } );
             this.queue[ signature ] = [ resolve, reject ];
         } );
@@ -233,14 +94,34 @@ class ApplicationState extends Record {
 }
 
 const Folder = ( { folder, onClick } ) => <div key={folder.cid} onClick={onClick}>
-    <img src={folder.cover_media.quickURL} style={{ maxWidth : 300, maxHeight : 300 }}/>
+    <img src={folder.cover_media.quickURL()} style={{ maxWidth : 300, maxHeight : 300 }} alt=''/>
     {folder.collection_name}
 </div>;
 
-const FolderItem = ( { item, onClick } ) => <div onClick={onClick}>
-    <img src={item.media.quickURL} style={{ maxWidth : 250, maxHeight : 250 }}/>
-    {item.media.caption && item.media.caption.text}
-</div>;
+const FolderItem = ( { item, onClick } ) => {
+    let preview = null;
+
+    switch( item.media.media_type ) {
+        case 1:
+        case 2:
+            preview =
+                <img src={item.media.quickURL()} style={{ maxWidth : 250, maxHeight : 250 }} className='carousel'
+                     alt=''/>;
+            break;
+        case 8:
+            preview = item.media.carousel_media.map(
+                media => <img src={media.quickURL()} style={{ maxWidth : 120, maxHeight : 120 }} key={media.cid}
+                              alt=''/>
+            );
+            break;
+    }
+
+    return <div onClick={onClick}>
+        {item.is_selected && '[selected]'}
+        {preview}
+        {item.media.caption && item.media.caption.text}
+    </div>;
+};
 
 @define
 export class Application extends React.Component {
@@ -257,39 +138,87 @@ export class Application extends React.Component {
     onInstLogin = () => {
         const { user }      = this.state,
               { name, pwd } = user;
-        this.state.io( 'login', { name, pwd } ).then(
-            () => user.logged = true
-        ).catch(err=>alert('Login error: ' + err));
+
+        Page.notifyOnComplete(
+            this.state.io( 'login', { name, pwd } )
+                .then( () => {
+                    user.logged = true;
+                    this.onShowFolders();
+                } ),
+            {
+                before  : 'Loggining in...',
+                success : 'Logged!',
+                error   : 'Login error'
+            }
+        );
     };
 
     onShowFolders = () => {
         const { folders } = this.state;
 
-        this.state.io( 'cmd', { cmd : 'folders' } ).then(
-            data => folders.add( data.items, { parse : true } )
+        Page.notifyOnComplete(
+            this.state.io( 'get_folders' ).then(
+                data => folders.add( data.items, { parse : true } )
+            ),
+            {
+                before  : 'Load folders...',
+                success : 'Folders are here!',
+                error   : 'Folders load error'
+            }
         );
+
     };
 
     onFolderClick( folder ) {
-        this.state.folder = folder;
-        this.state.io( 'cmd', { cmd : 'folder_content', args : [ folder.collection_id ] } ).then(
-            data => {
-                const { folders } = this.state,
-                      folder      = folders.get( data.collection_id );
+        this.state.open_folder = folder;
 
-                if( folder ) {
-                    folder.items.add( data.items, { parse : true } );
+        Page.notifyOnComplete(
+            this.state.io( 'get_folder_items', { args : [ folder.collection_id ] } ).then(
+                data => {
+                    const { folders } = this.state,
+                          folder      = folders.get( data.collection_id );
+
+                    if( folder ) {
+                        folder.items.add( _.map( data.items, item => {
+                            item.id = item.media && item.media.id;
+                            return item;
+                        } ), { parse : true } );
+                    }
                 }
+            ),
+            {
+                before  : 'Load folder media...',
+                success : 'Media is here!',
+                error   : 'Media load error'
             }
         );
     }
 
-    onFolderItemClick( folder ) {
+    /*
+        onFolderItemClick( folder ) {
+            folder.is_selected = !folder.is_selected;
+        }
+    */
 
-    }
+    onGetPdf = () => {
+        const { open_folder } = this.state;
+
+        Page.notifyOnComplete(
+            this.state.io( 'gen_pdf', { fid : open_folder.id, items : _.pluck( open_folder.selection, 'id' ) } ).then(
+                data => {
+
+                }
+            ),
+            {
+                before  : 'Load PDF...',
+                success : 'PDF generated!',
+                error   : 'PDF err'
+            }
+        );
+    };
 
     render() {
-        const { server, user, folder, folders } = this.state;
+        const { server, user, open_folder, folders } = this.state;
 
         return <div>
             <h1>Instagram login:</h1>
@@ -297,18 +226,17 @@ export class Application extends React.Component {
             <div>password: <Input valueLink={user.linkAt( 'pwd' )} t_ype='password'/></div>
             <Button onClick={this.onInstLogin} label='Login'/>
 
-            <Button onClick={this.onShowFolders} label='Show folders' disabled={!user.logged}/>
-
+            <Button onClick={this.onGetPdf} label='Get PDF' disabled={!open_folder || !open_folder.selection.length}/>
 
             <div className='server-info'>{
-                server.connected ? 'Connected' : ('Disconected. ')
+                server.connected ? 'Connected' : ('Disconnected. ')
             }</div>
 
             <div className='folders_container'>
-                {folder ? <Button onClick={() => this.state.folder = null} label='Go back'/> : null}
-                {folder ?
-                 folder.items.map( item =>
-                     <FolderItem item={item} onClick={() => this.onFolderItemClick( item )} key={item.cid}/>
+                {open_folder ? <Button onClick={() => this.state.open_folder = null} label='Go back'/> : null}
+                {open_folder ?
+                 open_folder.items.map( item =>
+                     <FolderItem item={item} onClick={() => item.is_selected = !item.is_selected} key={item.cid}/>
                  ) :
                  folders.map( folder =>
                      <Folder folder={folder} onClick={() => this.onFolderClick( folder )} key={folder.cid}/>

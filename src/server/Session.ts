@@ -1,3 +1,5 @@
+import { InstaFolder } from '../js/models/InstaModels'
+
 interface WsInputObject {
     signature: string;
 }
@@ -9,8 +11,11 @@ export class Session {
 
     private socket = null;
 
+    public folders = null;
+
     constructor(params) {
         this.socket = params.socket;
+        this.folders = new InstaFolder.Collection();
     }
 
     public log = (...params) => this.dolog('log', ...params);
@@ -30,8 +35,8 @@ export class Session {
         this.log('Answer emitted: ', output)
     }
 
-    public ws_error(input: WsInputObject, output: string) {
-        this.emit('answer', {__status: 'error', __sig: input.signature, msg: output});
-        this.log_error('Error emitted: ', output);
+    public ws_error(input: WsInputObject, output: Error) {
+        this.emit('answer', {__status: 'error', __sig: input.signature, msg: output.message});
+        this.log_error('Error emitted: ', output.message);
     }
 }

@@ -18,6 +18,7 @@ const webpack = require( 'webpack' ),
       plugins = [
           new webpack.ProvidePlugin( {
               $       : 'jquery',
+              jQuery  : 'jquery',
               jQueryUI: 'jquery-ui',
               _       : 'underscore'
           } ),
@@ -55,9 +56,10 @@ let config = {
         alias     : {
 //            pages : path.resolve( __dirname, 'resources', 'js', 'pages' ),
 //            css   : path.resolve( __dirname, 'resources', 'js', 'css' ),
-//            base  : path.resolve( __dirname, 'resources', 'js', 'base' ),
+            app  : path.resolve( __dirname, 'src', 'js', 'app' ),
 //            models: path.resolve( __dirname, 'resources', 'js', 'models' ),
-            ui    : path.resolve( __dirname, 'src', 'js', 'ui' )
+            ui    : path.resolve( __dirname, 'src', 'js', 'ui' ),
+            lib    : path.resolve( __dirname, 'src', 'js', 'lib' )
         },
         extensions: [ '.ts', '.js', '.jsx' ]
     },

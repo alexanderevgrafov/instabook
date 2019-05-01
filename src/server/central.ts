@@ -1,6 +1,6 @@
 import * as socketio from 'socket.io'
 import * as _ from 'underscore'
-import * as socket_api from './socket_api'
+import { api_map } from './socket_api'
 import {Session} from "./Session";
 
 const path = require('path');
@@ -15,7 +15,7 @@ const ws = socketio.listen(process.env.ws_server_port);
 
 fastify
     .register(require('fastify-static'), {
-        root: path.join(__dirname, '../public'),
+        root: path.join(__dirname, '../../public'),
         prefix: '/'
     })
     .register(require('fastify-cookie'))
@@ -48,15 +48,17 @@ ws.on('connection', socket => {
     const session = new Session({socket});
 
     console.log('WS client is connected');
-    _.mapObject(socket_api, (method, name) =>
+    _.mapObject(api_map, (method, name) =>
         socket.on(name, data => {
-                const result = method(session, data.params);
-
                 try {
+                    const result = method(session, data.params);
+
                     result && result.then && result
                         .then(obj => session.ws_success(data, obj))
-                        .catch(err=>{
+                        .catch((err:Error)=>{
+                            console.log('before err emit');
                             session.ws_error(data, err);
+                            console.log('after err emit');
                         })
                 } catch (err) {
                     session.ws_error(data, err);

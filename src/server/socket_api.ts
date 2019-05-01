@@ -1,20 +1,28 @@
 import {Session} from "./Session";
-
-const {exec} = require('child_process');
+import * as _ from 'underscore'
+import {exec} from 'child_process';
+import { WsHandler } from './interfaces'
+import * as fs from 'fs'
+import {PDFgenerate} from './pdf'
 
 const inst_api = (s, cmd, args = []) => {
     return new Promise((resolve, reject) => {
         exec(`php ./src/server/inst_api.php ${s.username} ${s.password} ${cmd} ` + args.join(' '),
             {maxBuffer: 1024 * 1024},
             (error, stdout, stderr) => {
+
+                // fs.writeFile('inta_log.txt', Date().toString() + ': ' + error + ' :' + stdout + ' :' + stderr, {flag: 'a'}, () => {
+                //
+                // });
+
                 if (error) {
                     reject('Fatal exec error: ' + error);
                 } else {
                     try {
                         const obj = JSON.parse(stdout);
 
-                        if (obj.status!=='ok') {
-                            reject(obj.error_message || { fuck: 'ttt'} );
+                        if (obj.status !== 'ok') {
+                            reject(obj.error_message || {fuck: 'ttt'});
                         } else {
                             obj.command = cmd;
 
@@ -28,16 +36,16 @@ const inst_api = (s, cmd, args = []) => {
     });
 };
 
-export const disconnect = s => s.log('WS client is disconnected');
+const disconnect = s => s.log('WS client is disconnected');
 
-export const hola = (s: Session, data: string) => {
+const hola: WsHandler = (s, data) => {
     s.log('Hola from', data);
     s.client_name = data;
 
     return Promise.resolve('Hellow');
 };
 
-export const login = (s: Session, data) => {
+const login: WsHandler = (s: Session, data) => {
     s.log('Login:', data);
 
     s.username = data.name;
@@ -48,18 +56,39 @@ export const login = (s: Session, data) => {
             s.log('Server actions after successful LOGIN', res);
             return res;
         })
-        // .catch(err => {
-        //         console.error('Server have login trouble: ', err);
-        //  //   return {status:err};
-        //         throw new Error(err)
-        //     }
-        // );
 };
 
-export const cmd = (s: Session, data) => {
+const cmd: WsHandler = (s, data) => {
     const {cmd, ...params} = data;
 
     s.log(cmd + ':', params);
 
-    return inst_api(s, cmd, params.args);
+    return inst_api(s, cmd, params.args).then((obj: any) => {
+        switch (cmd) {
+            case 'folders':
+                s.folders.add(obj.items, {parse: true});
+                break;
+            case 'folder_content':
+                const {folders} = s,
+                    folder = folders.get(obj.collection_id);
+
+                if (folder) {
+                    folder.items.add(_.map(obj.items, item => {
+                        item.id = item.media && item.media.id;
+                        return item;
+                    }), {parse: true});
+                }
+                break;
+        }
+        return obj;
+    });
+};
+
+export const api_map = {
+    hola: hola,
+    disconnect: disconnect,
+    login: login,
+    get_folders: (s, dt) => cmd(s, {cmd: 'folders'}),
+    get_folder_items: (s, dt) => cmd(s, _.extend(dt, {cmd: 'folder_content'})),
+    gen_pdf: PDFgenerate
 };
