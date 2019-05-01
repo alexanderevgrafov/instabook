@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import * as socketio from 'socket.io'
 import * as _ from 'underscore'
 import { api_map } from './socket_api'

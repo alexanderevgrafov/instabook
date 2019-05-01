@@ -1,11 +1,10 @@
 import {Session} from "./Session";
 import * as _ from 'underscore'
 import {exec} from 'child_process';
-import { WsHandler } from './interfaces'
-import * as fs from 'fs'
+import {WsHandler} from './interfaces'
 import {PDFgenerate} from './pdf'
 
-const inst_api = (s, cmd, args = []) => {
+const inst_api = (s: Session, cmd: string, args: [] = []) => {
     return new Promise((resolve, reject) => {
         exec(`php ./src/server/inst_api.php ${s.username} ${s.password} ${cmd} ` + args.join(' '),
             {maxBuffer: 1024 * 1024},
@@ -38,14 +37,14 @@ const inst_api = (s, cmd, args = []) => {
 
 const disconnect = s => s.log('WS client is disconnected');
 
-const hola: WsHandler = (s, data) => {
+const hola: WsHandler = (s, data: string) => {
     s.log('Hola from', data);
     s.client_name = data;
 
     return Promise.resolve('Hellow');
 };
 
-const login: WsHandler = (s: Session, data) => {
+const login: WsHandler = (s, data) => {
     s.log('Login:', data);
 
     s.username = data.name;
@@ -85,9 +84,9 @@ const cmd: WsHandler = (s, data) => {
 };
 
 export const api_map = {
-    hola: hola,
-    disconnect: disconnect,
-    login: login,
+    hola,
+    disconnect,
+    login,
     get_folders: (s, dt) => cmd(s, {cmd: 'folders'}),
     get_folder_items: (s, dt) => cmd(s, _.extend(dt, {cmd: 'folder_content'})),
     gen_pdf: PDFgenerate

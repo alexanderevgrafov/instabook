@@ -2,7 +2,8 @@ import * as  _ from 'underscore';
 import {WsHandler} from "./interfaces";
 import * as  pdf from 'html-pdf';
 
-const PAGE_BREAK = '<div style="page-break-before: always;"></div>';
+const PAGE_BREAK = '<div style="page-break-before:always;"></div>';
+
 export const PDFgenerate: WsHandler = (s, data) => {
     const {fid} = data,
         {folders} = s, folder = folders.get(fid);

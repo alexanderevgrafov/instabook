@@ -1,5 +1,5 @@
 import {Session} from './Session'
 
 export interface WsHandler {
-    (s: Session, data: any): any;
+    (s: Session, data: any): Promise<{}>;
 }
