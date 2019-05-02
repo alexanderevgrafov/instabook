@@ -23,7 +23,7 @@ export const PDFgenerate: WsHandler = (s, data) => {
 
             params.post = params.post.replace(new RegExp(String.fromCharCode(10), 'g'), '<br/>');
 
-            return templates.page0(params);
+            return templates('page0').tmpl(params);
         })
             .join(PAGE_BREAK) +
         '<hr/></body></html>';
