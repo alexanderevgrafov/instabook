@@ -11,7 +11,6 @@ import config from '../../server/config'
 import { InstaFolder } from '../models/InstaModels'
 
 let ws;
-//import 'bootstrap/dist/css/bootstrap.min.css'
 
 import '../../sass/app.scss'
 import { Checkbox } from 'react-type-r/tags';
@@ -21,18 +20,19 @@ const server_path = (config.ws_server_addr || 'http://localhost') + ':' + config
 @define
 class ApplicationState extends Record {
     static attributes = {
-        server  : Record.defaults( {
+        station_name : '',
+        server       : Record.defaults( {
             connected          : false,
             reconnect_after    : 0,
             reconnect_attempts : 0
         } ),
-        user    : Record.defaults( {
+        user         : Record.defaults( {
             name   : 'sveta.evgrafova',//'alexander.evgrafov',  //
             pwd    : 'bp8djx408122',//'lokkol123',   //
             logged : false
         } ),
-        folders : InstaFolder.Collection,
 
+        folders     : InstaFolder.Collection,
         open_folder : shared( InstaFolder )
     };
 
@@ -53,6 +53,16 @@ class ApplicationState extends Record {
                     reconnect_after    : 0,
                     reconnect_attempts : 0
                 } );
+
+                if( this.user.logged ) {
+                    this.do_login().then( () => {
+                        this.io( 'hola', this.user.name ).then( () => {
+                                this.get_open_folder();
+//                            () => console.log( 'on hola 2' )
+                            }
+                        );
+                    } )
+                }
             } )
             .on( 'close', () => {
                 console.log( 'Disconnected from server. Reconnection in ' + medialon.reconnectAfter + ' seconds...' );
@@ -91,6 +101,73 @@ class ApplicationState extends Record {
             this.queue[ signature ] = [ resolve, reject ];
         } );
     }
+
+    do_login() {
+        const { name, pwd } = this.user,
+              p             = this.io( 'login', { name, pwd } );
+
+        Page.notifyOnComplete(
+            p.then( () => {
+                this.user.logged = true;
+
+                return this.get_folders();
+            } ),
+            {
+                before  : 'Loggining in...',
+                success : 'Logged!',
+                error   : 'Login error'
+            }
+        );
+
+        return p;
+    }
+
+    get_folders() {
+        const p = this.io( 'get_folders' );
+        Page.notifyOnComplete(
+            p.then(
+                data => this.folders.add( data.items, { parse : true } )
+            ),
+            {
+                before  : 'Load folders...',
+                success : 'Folders are here!',
+                error   : 'Folders load error'
+            }
+        );
+
+        return p;
+    }
+
+    get_open_folder() {
+        const { open_folder } = this;
+
+        if( open_folder ) {
+            const p = this.io( 'get_folder_items', { args : [ open_folder.collection_id ] } );
+
+            Page.notifyOnComplete(
+                p.then(
+                    data => {
+                        const { folders } = this,
+                              folder      = folders.get( data.collection_id );
+
+                        if( folder ) {
+                            folder.items.add( _.map( data.items, item => {
+                                item.id = item.media && item.media.id;
+                                return item;
+                            } ), { parse : true } );
+                        }
+                    }
+                ),
+                {
+                    before  : 'Load folder media...',
+                    success : 'Media is here!',
+                    error   : 'Media load error'
+                }
+            );
+        } else {
+            return Promise.resolve( {} );
+        }
+    }
 }
 
 const Folder = ( { folder, onClick } ) => <div key={folder.cid} onClick={onClick}>
@@ -128,70 +205,19 @@ export class Application extends React.Component {
     static state = ApplicationState;
 
     componentWillMount() {
-//        const { ws } = this.state;
-
         this.state.io( 'hola', 'Shark' ).then(
             () => console.log( 'on hola' )
         );
     }
 
     onInstLogin = () => {
-        const { user }      = this.state,
-              { name, pwd } = user;
-
-        Page.notifyOnComplete(
-            this.state.io( 'login', { name, pwd } )
-                .then( () => {
-                    user.logged = true;
-                    this.onShowFolders();
-                } ),
-            {
-                before  : 'Loggining in...',
-                success : 'Logged!',
-                error   : 'Login error'
-            }
-        );
-    };
-
-    onShowFolders = () => {
-        const { folders } = this.state;
-
-        Page.notifyOnComplete(
-            this.state.io( 'get_folders' ).then(
-                data => folders.add( data.items, { parse : true } )
-            ),
-            {
-                before  : 'Load folders...',
-                success : 'Folders are here!',
-                error   : 'Folders load error'
-            }
-        );
-
+        this.state.do_login();
     };
 
     onFolderClick( folder ) {
         this.state.open_folder = folder;
 
-        Page.notifyOnComplete(
-            this.state.io( 'get_folder_items', { args : [ folder.collection_id ] } ).then(
-                data => {
-                    const { folders } = this.state,
-                          folder      = folders.get( data.collection_id );
-
-                    if( folder ) {
-                        folder.items.add( _.map( data.items, item => {
-                            item.id = item.media && item.media.id;
-                            return item;
-                        } ), { parse : true } );
-                    }
-                }
-            ),
-            {
-                before  : 'Load folder media...',
-                success : 'Media is here!',
-                error   : 'Media load error'
-            }
-        );
+        this.state.get_open_folder();
     }
 
     /*

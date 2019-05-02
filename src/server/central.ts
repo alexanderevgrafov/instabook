@@ -34,7 +34,6 @@ fastify.get('/api/*', (request, reply) => {
     reply.send({hello: 'world ' + request.params['*']})
 });
 
-// Run the server!
 const start = async () => {
     try {
         await fastify.listen(process.env.server_port || 3000);

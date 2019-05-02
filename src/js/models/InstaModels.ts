@@ -1,4 +1,3 @@
-//import React from 'react-type-r'
 import {Record, Collection, type, predefine, define, auto} from 'type-r'
 
 @define
@@ -129,19 +128,6 @@ InstaMedia.define({
         return img ? img.url : '';
     },
 
-//     render() {
-//         switch( this.media_type ) {
-//             case 1:
-//             case 2:
-//                 return this.quickURL();
-//                 //return <img src={this.quickURL()} style={{ maxWidth : 250, maxHeight : 250 }} className='carousel'/>;
-//             case 8:
-// //                return <div><h4>Carousel</h4><img src={this.quickURL} style={{ maxWidth : 250, maxHeight : 250 }}/></div>;
-//                 return this.carousel_media.map(
-//                     media => media.quickURL()//<img src={media.quickURL()} style={{ maxWidth : 120, maxHeight : 120 }} key={media.cid}/>
-//                 ).join(', ');
-//         }
-//     }
 });
 
 @define

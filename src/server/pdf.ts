@@ -13,7 +13,7 @@ export const PDFgenerate: WsHandler = (s, data) => {
     }
 
     const items = _.map(data.items, id => folder.items.get(id)),
-        filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('[^\w]+', 'g'), '_') + '.pdf';
+        filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') + '.pdf';
 
     let html = '<html><body>' +
         _.map(items, item => {
