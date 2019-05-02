@@ -15,9 +15,9 @@
         "allowJs": true
     },
 
-    "include": [
+    "files": [
         "./src/server/central.ts"
-],
+    ],
 
     "exclude": [
         "node_modules",

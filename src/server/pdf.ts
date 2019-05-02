@@ -1,8 +1,7 @@
 import * as  _ from 'underscore';
 import {WsHandler} from "./interfaces";
 import * as  pdf from 'html-pdf';
-
-const PAGE_BREAK = '<div style="page-break-before:always;"></div>';
+import {templates, PAGE_BREAK} from "./Templates";
 
 export const PDFgenerate: WsHandler = (s, data) => {
     const {fid} = data,
@@ -15,26 +14,31 @@ export const PDFgenerate: WsHandler = (s, data) => {
     const items = _.map(data.items, id => folder.items.get(id)),
         filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') + '.pdf';
 
-    let html = '<html><body>' +
+    let html = '<html><body style="font-size:14pt">' +
         _.map(items, item => {
-            let text = item.media.caption && item.media.caption.text || '';
+            const params = {
+                post: item.media.caption && item.media.caption.text || '',
+                media_url: item.media.fullURL()
+            };
 
-            text = (text || '').replace(new RegExp(String.fromCharCode(10), 'g'), '<br/>');
+            params.post = params.post.replace(new RegExp(String.fromCharCode(10), 'g'), '<br/>');
 
-            return `<img src='${item.media.fullURL()}' width='100%' alt=''/>` +
-            PAGE_BREAK +
-            `<p style='font-size:14pt'>${text}</p>`
+            return templates.page0(params);
         })
-            .join( PAGE_BREAK ) +
+            .join(PAGE_BREAK) +
         '<hr/></body></html>';
 
     return new Promise((resolve, reject) => {
-        pdf.create(html).toFile(filename, function (err) {
-            if (err)
-                reject(err);
-
-            resolve(html);
+        pdf.create(html, {
+            "format": "A5",
+            "orientation": "portrait"
         })
+            .toFile(filename, function (err) {
+                if (err)
+                    reject(err);
+
+                resolve(html);
+            })
     });
 };
 
