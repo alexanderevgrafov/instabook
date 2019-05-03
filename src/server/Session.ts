@@ -1,9 +1,6 @@
 import {Record, Collection, type, define, auto} from 'type-r'
 import {InstaFolder} from '../js/models/InstaModels'
-
-interface WsInputObject {
-    signature: string;
-}
+import { WsInputObject } from './interfaces'
 
 @define
 class InstaFolderCollection extends InstaFolder.Collection {

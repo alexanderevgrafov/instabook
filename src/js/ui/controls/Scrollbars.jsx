@@ -1,8 +1,7 @@
 import React, { define, mixins } from 'react-type-r';
 import { control_focus_mixin, FormControl } from './Common.jsx';
 import { Protect } from './Protect.jsx'
-import Page from 'base/Page'
-
+import Page from 'app/Page'
 import * as _ from 'underscore';
 import cx from 'classnames';
 import './scrollbars.less';

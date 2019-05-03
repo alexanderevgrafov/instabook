@@ -64,6 +64,13 @@ export class InstaCaption extends Record {
     // }
 }
 
+@define
+export class PostConfig extends Record {
+    static attributes = {
+        tmpl: 'page0'
+    }
+}
+
 @predefine
 export class InstaMedia extends Record {
 }
@@ -113,11 +120,12 @@ InstaMedia.define({
 //video_dash_manifest: ""
         video_duration: 0,
 //video_versions: (3) [{…}, {…}, {…}],
-        view_count: 0
+        view_count: 0,
+        config: type(PostConfig).toJSON(false)
     },
 
     quickURL() {
-        const small = this.image_versions2.small();
+        let small = this.media_type===8 ? this.carousel_media.at(0).quickURL(): this.image_versions2.small();
 
         return small ? small.url : '';
     },

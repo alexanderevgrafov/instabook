@@ -3,9 +3,20 @@ import { Record, shared, type, define } from 'type-r'
 import * as socketIOClient from 'socket.io-client';
 import Page from 'app/Page'
 import config from '../../server/config'
-import { InstaFolder } from '../models/InstaModels'
+import { InstaUser, InstaFolder } from '../models/InstaModels'
 
 const server_path = (config.ws_server_addr || 'http://localhost') + ':' + config.ws_server_port;
+
+@define
+class WsTask extends Record {
+    static idAttribute = 'signature:';
+
+    static attributes = {
+        signature : '',
+        resolve   : Function,
+        reject    : Function
+    }
+}
 
 @define
 export class ApplicationState extends Record {
@@ -17,19 +28,18 @@ export class ApplicationState extends Record {
             reconnect_attempts : 0
         } ),
         user         : Record.defaults( {
+            info   : InstaUser,
             name   : 'sveta.evgrafova',//'alexander.evgrafov',  //
             pwd    : 'bp8djx408122',//'lokkol123',   //
             logged : false
         } ),
-
-        folders     : InstaFolder.Collection,
-        open_folder : shared( InstaFolder )
+        folders      : InstaFolder.Collection,
+        open_folder  : shared( InstaFolder ),
+        screen    : '',
+        queue        : WsTask.Collection
     };
 
-    ws = null;
-
-    queue = {};
-
+    ws      = null;
     counter = 0;
 
     ws_init() {
@@ -45,9 +55,9 @@ export class ApplicationState extends Record {
                 } );
 
                 if( this.user.logged ) {
-                    this.do_login().then( () => {
+                    this.do_login( { hidden : true } ).then( () => {
                         this.io( 'hola', this.user.name ).then( () => {
-                                this.get_open_folder();
+                                this.get_open_folder( { hidden : true } );
                             }
                         );
                     } )
@@ -58,21 +68,23 @@ export class ApplicationState extends Record {
                 server.connected = false;
                 server.reconnect_attempts++;
 
-                window.setTimeout( config.ws_reconnect_delay * 1000 * server.reconnect_attempts,
-                    () => {
-                        ws.connect( server_path );
-                    } );
+                window.setTimeout( () => {
+                    ws.connect( server_path );
+                }, config.ws_reconnect_delay * 1000 * server.reconnect_attempts );
             } )
             .on( 'answer', data => {
-                if( data.__sig && this.queue[ data.__sig ] ) {
-                    const [ resolve, reject ] = this.queue[ data.__sig ];
+                let task;
+                if( data.__sig && (task = this.queue.get( data.__sig )) ) {
+                    const { resolve, reject } = task;
 
                     if( data.__status === 'ok' ) {
                         resolve( data.answer );
                     } else {
                         reject( data.msg );
                     }
-                    delete (this.queue[ data.__sig ]);
+
+                    this.queue.remove( task );
+                    task.destroy();
 
                 } else {
                     console.error( 'WS answer with unknown sig: ', data );
@@ -87,20 +99,21 @@ export class ApplicationState extends Record {
 
         return new Promise( ( resolve, reject ) => {
             this.ws.emit( command, { signature, params } );
-            this.queue[ signature ] = [ resolve, reject ];
+            this.queue.add( { signature, resolve, reject }, { parse : true } );
         } );
     }
 
-    do_login() {
-        const { name, pwd } = this.user,
-              p             = this.io( 'login', { name, pwd } );
+    do_login( params ) {
+        const { name, pwd } = this.user;
 
-        Page.notifyOnComplete(
-            p.then( () => {
-                this.user.logged = true;
+        const p = this.io( 'login', { name, pwd } ).then( data => {
+            this.user.logged = true;
+            this.user.info.set( data, {parse:true});
+            this.get_folders( params );
+        } );
 
-                return this.get_folders();
-            } ),
+        !params.hidden &&
+        Page.notifyOnComplete( p,
             {
                 before  : 'Loggining in...',
                 success : 'Logged!',
@@ -111,12 +124,13 @@ export class ApplicationState extends Record {
         return p;
     }
 
-    get_folders() {
-        const p = this.io( 'get_folders' );
-        Page.notifyOnComplete(
-            p.then(
-                data => this.folders.add( data.items, { parse : true } )
-            ),
+    get_folders( params ) {
+        const p = this.io( 'get_folders' ).then(
+            data => this.folders.add( data.items, { parse : true } )
+        );
+
+        !params.hidden &&
+        Page.notifyOnComplete( p,
             {
                 before  : 'Load folders...',
                 success : 'Folders are here!',
@@ -127,32 +141,34 @@ export class ApplicationState extends Record {
         return p;
     }
 
-    get_open_folder() {
+    get_open_folder( params ) {
         const { open_folder } = this;
 
         if( open_folder ) {
-            const p = this.io( 'get_folder_items', { args : [ open_folder.collection_id ] } );
+            const p = this.io( 'get_folder_items', { args : [ open_folder.collection_id ] } ).then(
+                data => {
+                    const { folders } = this,
+                          folder      = folders.get( data.collection_id );
 
-            Page.notifyOnComplete(
-                p.then(
-                    data => {
-                        const { folders } = this,
-                              folder      = folders.get( data.collection_id );
-
-                        if( folder ) {
-                            folder.items.add( _.map( data.items, item => {
-                                item.id = item.media && item.media.id;
-                                return item;
-                            } ), { parse : true } );
-                        }
+                    if( folder ) {
+                        folder.items.add( _.map( data.items, item => {
+                            item.id = item.media && item.media.id;
+                            return item;
+                        } ), { parse : true } );
                     }
-                ),
+                }
+            );
+
+            !params.hidden &&
+            Page.notifyOnComplete( p,
                 {
                     before  : 'Load folder media...',
                     success : 'Media is here!',
                     error   : 'Media load error'
                 }
             );
+
+            return p;
         } else {
             return Promise.resolve( {} );
         }

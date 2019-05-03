@@ -1,8 +1,8 @@
 import React, { define }  from 'react-type-r'
 import cx                 from 'classnames'
 import { Motion, spring } from 'react-motion'
-import Page               from 'base/Page'
-import { _t }             from 'base/translate'
+import Page               from 'app/Page'
+import { _t }             from 'app/translate'
 
 const PANEL_OPEN_SIZE = 305,
       PANEL_MOBILE_OPEN_SIZE = 95,

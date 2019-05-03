@@ -1,11 +1,7 @@
 import * as  _ from 'underscore';
 import * as fs from "fs"
 import * as Handlebars from "handlebars";
-
-interface TemplateDescription {
-    tmpl: Function,
-    params?: { [propName: string]: string }
-}
+import { TemplateDescription } from './interfaces'
 
 const TMPL_PATH = './src/templates/',
     PAGE_BREAK = `<div style='page-break-before:always;'></div>`,
@@ -13,13 +9,10 @@ const TMPL_PATH = './src/templates/',
     templates = function (name: string): TemplateDescription {
 
         if (!cache[name]) {
-            // fs.readFileSync(TMPL_PATH + name + '/' + name + '.hbs', (err, data) => {
-            //     cache[name] = Handlebars.compile(data.toString());
-            // });
             let tmpl_file_name = '',
                 dir = fs.readdirSync(TMPL_PATH + name, 'utf8');
 
-            // template file can have any name, generally.  but the extention is HBS
+            // template file can have any name, generally.  but the extension is HBS
             for (let i in dir) {
                 const name = dir[i].split('.');
 
@@ -27,6 +20,11 @@ const TMPL_PATH = './src/templates/',
                     tmpl_file_name = dir[i];
                     break;
                 }
+            }
+
+            // TODO: Add require for template params as well - usefull to validate request
+            if (!tmpl_file_name) {
+                throw new Error('Template file for `' + name + '` not found');
             }
 
             const data = fs.readFileSync(TMPL_PATH + name + '/' + tmpl_file_name, 'utf8');
