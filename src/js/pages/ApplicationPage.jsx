@@ -110,7 +110,7 @@ const Post = ( { item } ) =>
 const Prepare = ( { state, onGetPdf } ) =>
     <Container className='prepare_container'>
         <Row>
-            <Button onClick={() => state.screen === ''} label='Go back'/>
+            <Button onClick={() => state.screen = ''} label='Go back'/>
             <Button onClick={onGetPdf} label='Get PDF'/>
         </Row>
         <Row>
@@ -227,7 +227,9 @@ export class ApplicationPage extends React.Component {
         return <Container>
             <Row>{
                 _.map( [ 'login', 'folders', 'folder', 'prepare' ], step =>
-                    <Col className={cx( 'step', step, { current : step === cur_step } )}>{_t( step )}</Col>
+                    <Col className="text-center">
+                        <h3><Badge pill variant={step === cur_step ? 'primary' : 'light'}>{_t( step )}</Badge></h3>
+                    </Col>
                 )
             }
             </Row>
