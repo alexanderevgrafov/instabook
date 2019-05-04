@@ -14,7 +14,9 @@ class WsTask extends Record {
     static attributes = {
         signature : '',
         resolve   : Function,
-        reject    : Function
+        reject    : Function,
+        command   : '',
+        params    : null
     }
 }
 
@@ -80,7 +82,7 @@ export class ApplicationState extends Record {
                     if( data.__status === 'ok' ) {
                         resolve( data.answer );
                     } else {
-                        reject( data.msg );
+                        reject( data.msg || '[no error description provided]');
                     }
 
                     this.queue.remove( task );
@@ -97,14 +99,14 @@ export class ApplicationState extends Record {
 
         return new Promise( ( resolve, reject ) => {
             this.ws.emit( command, { signature, params } );
-            this.queue.add( { signature, resolve, reject }, { parse : true } );
+            this.queue.add( { signature, resolve, reject, command, params }, { parse : true } );
         } );
     }
 
     do_login( params = {} ) {
         const { name, pwd } = this.user;
 
-        if( this.user.logged && this.user.name === this.user.info.username ) {
+        if( !params.hidden && this.user.logged && this.user.name === this.user.info.username ) {
             return this.get_folders( params );
         }
 

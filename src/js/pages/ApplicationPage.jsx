@@ -227,7 +227,7 @@ export class ApplicationPage extends React.Component {
         return <Container>
             <Row>{
                 _.map( [ 'login', 'folders', 'folder', 'prepare' ], step =>
-                    <Col className="text-center">
+                    <Col className="text-center" key={step}>
                         <h3><Badge pill variant={step === cur_step ? 'primary' : 'light'}>{_t( step )}</Badge></h3>
                     </Col>
                 )
