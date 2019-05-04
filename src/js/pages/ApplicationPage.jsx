@@ -1,6 +1,6 @@
 import React from 'react-type-r'
 import { define } from 'type-r'
-import { Select } from 'ui/Controls'
+import { Select, Slider } from 'ui/Controls'
 import {
     Container, Row, Col,
     Badge,
@@ -13,7 +13,7 @@ import { all as templates } from 'templates/all_templates'
 import 'scss/app.scss'
 import cx from 'classnames'
 import { _t } from 'app/translate'
-import "templates/helpers";
+import 'templates/helpers';
 
 const LoginView = ( { user, onLogin } ) =>
     <Modal.Dialog>
@@ -129,7 +129,7 @@ const PostPrepare = ( { post } ) => {
         post       : (post.media.caption && post.media.caption.text).replace(
             new RegExp( String.fromCharCode( 10 ), 'g' ), '<br/>' ),
         page_break : '<hr/>',
-        config: post.config.toJSON()
+        config     : post.config.toJSON()
     }, template  = templates[ post.config.tmpl ];
 
     if( !template ) {
@@ -141,12 +141,15 @@ const PostPrepare = ( { post } ) => {
             <Select valueLink={post.config.linkAt( 'tmpl' )}>
                 {_.map( _.keys( templates ), name => <option value={name} key={name}>{name}</option> )}
             </Select>
-            <Form.ControlLinked type='number' valueLink={post.config.linkAt('post_font_size')}/>
+            {/*<Form.ControlLinked type='number' valueLink={post.config.linkAt('post_font_size')}/>*/}
+            <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400} step={5}/>
         </Card.Header>
         <Card.Body>
-            <div className='prepare_preview_box'>
-                <div className='prepare_preview_page'
-                     dangerouslySetInnerHTML={{ __html : template.template( params ) }}/>
+            <div className={'prepare_outer_cutter'}>
+                <div className='prepare_preview_box'>
+                    <div className='prepare_preview_page'
+                         dangerouslySetInnerHTML={{ __html : template.template( params ) }}/>
+                </div>
             </div>
         </Card.Body>
     </Card>

@@ -67,7 +67,7 @@ export class InstaCaption extends Record {
 @define
 export class PostConfig extends Record {
     @auto('page0') tmpl: string;
-    @auto(60) post_font_size: number;
+    @auto(200) post_font_size: number;
     @auto(false) double_side: boolean;
 }
 

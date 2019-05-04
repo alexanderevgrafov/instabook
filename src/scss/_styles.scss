@@ -32,6 +32,25 @@
 .prepare_controls {
 }
 
+$fade_overflow_post_spread: 3;
+
+.prepare_outer_cutter {
+  padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) ($card-spacer-x);
+  margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
+  overflow:hidden;
+  position:relative;
+
+  &::after {
+    content:'';
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:$card-spacer-x * $fade_overflow_post_spread;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), white);
+  }
+}
+
 .prepare_preview_box {
   position: relative;
   width: 74mm;
@@ -41,11 +60,16 @@
 
 .prepare_preview_page {
   position: absolute;
-  background-color: #dafaff;
   transform: scale(.5);
   transform-origin: top left;
-}
 
+  border: 1px solid silver;
+  box-shadow: 5pt 5pt 20pt rgba(0,0,0,.4);
+}
+//----- template css overwrite
+.prepare_preview_page .body {
+  overflow:visible;
+}
 //------------------
 .card_square_img {
   padding-top:100%; // to keep it squiare;

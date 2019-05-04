@@ -1,5 +1,5 @@
 import React from 'react-type-r'
-//import { Slider, Range } from './controls/Slider';
+import { Slider, Range } from './controls/Slider';
 import { Input, NumberInput, TextInput, TextArea } from './controls/Input'
 import { Select } from './controls/Select.jsx'
 import { MultiSelect, MultiPopupSelect } from './controls/ListSelect.jsx'
@@ -20,7 +20,7 @@ export {
     Select,
     MultiSelect,
     MultiPopupSelect,
-//    Slider,
+    Slider,
 //    Range,
     Form,
     FormRow

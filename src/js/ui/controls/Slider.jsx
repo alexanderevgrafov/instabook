@@ -1,6 +1,7 @@
 import React, { Link, define } from 'react-type-r';
 import cx from 'classnames';
 import Slider, { Range } from 'rc-slider';
+import 'rc-slider/dist/rc-slider.css'
 
 @define
 class MySlider extends React.Component {
