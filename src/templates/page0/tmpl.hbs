@@ -1,7 +1,47 @@
-<h2 style="clear:both">Template ZERO</h2>
-<div style="width:50%; min width:500px; margin:0 auto">
-<div class='tmp_title'>{{title}}</div>
-<img src='{{media_url}}'  style="width:30%; float:left;" alt=''/>
-{{{page_break}}}
-<p style='font-size:1em'>{{{post}}}</p>
+<style>
+    body {
+        margin: 0
+    }
+
+    .body {
+        width: 147mm;
+        height: 209mm;
+        overflow: hidden;
+        box-sizing: border-box;
+        font-weight: 400;
+        line-height: 1.6;
+        text-align: left;
+
+        background-color: #ffe2ee;
+        font-size: 14pt;
+        font-family: "Times New Roman";
+    }
+
+    .img0 {
+        display: block;
+        width: 50%;
+        margin: 0 auto;
+    }
+
+    .post {
+        font-size: {{{percent 1 config.post_font_size}}}em;
+    }
+
+    .tmplname {
+        position: absolute;
+        top: 5mm;
+        right: 5mm;
+        padding: 5mm;
+        border-radius: 5mm;
+
+        background: rgba(255, 255, 255, .5);
+        color: black;
+    }
+</style>
+<div class='body'>
+    <div class='tmp_title'>{{title}}</div>
+    <img src='{{media_url}}' class='img0' alt=''/>
+    {{{page_break}}}
+    <div class='post'>{{{post}}}</div>
+    <div class='tmplname'>Template ZERO</div>
 </div>

@@ -33,11 +33,18 @@
 }
 
 .prepare_preview_box {
+  position: relative;
+  width: 74mm;
+  height: 105mm;
+  margin: 0 auto;
 }
 
 .prepare_preview_page {
+  position: absolute;
+  background-color: #dafaff;
+  transform: scale(.5);
+  transform-origin: top left;
 }
-
 
 //------------------
 .card_square_img {

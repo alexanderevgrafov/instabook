@@ -33,7 +33,7 @@ export class InstaImageVersion extends Record {
             return this.at(0);
         },
         big() {
-            return this.at(1);
+            return this.at(this.length - 1);
         },
         parse(data) {
             return data.candidates
@@ -66,9 +66,9 @@ export class InstaCaption extends Record {
 
 @define
 export class PostConfig extends Record {
-    static attributes = {
-        tmpl: 'page0'
-    }
+    @auto('page0') tmpl: string;
+    @auto(60) post_font_size: number;
+    @auto(false) double_side: boolean;
 }
 
 @predefine
@@ -78,8 +78,8 @@ export class InstaMedia extends Record {
 InstaMedia.define({
     attributes: {
         id: '',
-        image_versions2: InstaImageVersion.Collection,
         media_type: 0,  // 1-Photo, 2 - video  8-carousel
+        image_versions2: InstaImageVersion.Collection,
         carousel_media_count: 4,
         carousel_media: InstaMedia.Collection,
         // can_view_more_preview_comments    : false,

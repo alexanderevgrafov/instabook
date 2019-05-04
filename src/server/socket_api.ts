@@ -2,7 +2,7 @@ import {Session} from "./Session";
 import * as _ from 'underscore'
 import {exec} from 'child_process';
 import {WsHandler} from './interfaces'
-import {PDFgenerate} from './pdf'
+import {PDFgenerate, PDF_test} from './pdf'
 
 const inst_api = (s: Session, cmd: string, args: [] = []) => {
     return new Promise((resolve, reject) => {
@@ -89,5 +89,6 @@ export const api_map = {
     login,
     get_folders: (s, dt) => cmd(s, {cmd: 'folders'}),
     get_folder_items: (s, dt) => cmd(s, _.extend(dt, {cmd: 'folder_content'})),
-    gen_pdf: PDFgenerate
+    gen_pdf: PDFgenerate,
+    test_pdf: PDF_test
 };

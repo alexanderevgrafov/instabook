@@ -13,6 +13,7 @@ import { all as templates } from 'templates/all_templates'
 import 'scss/app.scss'
 import cx from 'classnames'
 import { _t } from 'app/translate'
+import "templates/helpers";
 
 const LoginView = ( { user, onLogin } ) =>
     <Modal.Dialog>
@@ -125,8 +126,10 @@ const Prepare = ( { state, onGetPdf } ) =>
 const PostPrepare = ( { post } ) => {
     const params = {
         media_url  : post.media.quickURL(),
-        post       : post.media.caption && post.media.caption.text,
-        page_break : '<hr/>'
+        post       : (post.media.caption && post.media.caption.text).replace(
+            new RegExp( String.fromCharCode( 10 ), 'g' ), '<br/>' ),
+        page_break : '<hr/>',
+        config: post.config.toJSON()
     }, template  = templates[ post.config.tmpl ];
 
     if( !template ) {
@@ -138,6 +141,7 @@ const PostPrepare = ( { post } ) => {
             <Select valueLink={post.config.linkAt( 'tmpl' )}>
                 {_.map( _.keys( templates ), name => <option value={name} key={name}>{name}</option> )}
             </Select>
+            <Form.ControlLinked type='number' valueLink={post.config.linkAt('post_font_size')}/>
         </Card.Header>
         <Card.Body>
             <div className='prepare_preview_box'>
@@ -177,7 +181,7 @@ export class ApplicationPage extends React.Component {
         this.state.screen = 'prepare';
     };
 
-    onGetPdf = () => {
+    onGetPdf = cmd => {
         const { open_folder } = this.state;
 
         Page.notifyOnComplete(
@@ -194,6 +198,27 @@ export class ApplicationPage extends React.Component {
         );
     };
 
+    getFakePdf = () => {
+        const { fake_post } = this.state;
+
+        Page.notifyOnComplete(
+            this.state.io( 'test_pdf', {
+                text   : fake_post.media.caption.text || '',
+                url    : fake_post.media.fullURL(),
+                config : fake_post.config.toJSON()
+            } ).then(
+                data => {
+                    console.log( 'Test PDF is in the folder', data )
+                }
+            ),
+            {
+                before  : 'Load test PDF...',
+                success : 'PDF test generated!',
+                error   : 'PDF test err'
+            }
+        );
+    };
+
     render() {
         const { state }                              = this,
               { user, open_folder, folders, screen } = state;
@@ -206,7 +231,17 @@ export class ApplicationPage extends React.Component {
 
         switch( cur_step ) {
             case 'login':
-                View = <LoginView user={user} onLogin={this.onInstLoginClick}/>;
+                View = <Row>
+                    <Col>
+                        <LoginView user={user} onLogin={this.onInstLoginClick}/>
+                    </Col>
+                    <Col>
+                        <Button onClick={this.getFakePdf} label='Get test PDF'/>
+                    </Col>
+                    <Col>
+                        <PostPrepare post={state.fake_post}/>
+                    </Col>
+                </Row>;
                 break;
             case 'folders':
                 View = <FoldersList folders={folders}
@@ -227,7 +262,7 @@ export class ApplicationPage extends React.Component {
         return <Container>
             <Row>{
                 _.map( [ 'login', 'folders', 'folder', 'prepare' ], step =>
-                    <Col className="text-center" key={step}>
+                    <Col className='text-center' key={step}>
                         <h3><Badge pill variant={step === cur_step ? 'primary' : 'light'}>{_t( step )}</Badge></h3>
                     </Col>
                 )

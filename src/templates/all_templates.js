@@ -1,6 +1,10 @@
-const default_params = require('./params.default.json'),
-      default_icon = require('./icon.default.png'),
-      default_tmpl = require('./tmpl.default.hbs'),
+import * as _ from 'underscore'
+import Handlebars from 'handlebars/runtime';
+import { helpers } from './helpers'
+
+const default_params = require( './params.default.json' ),
+      default_icon   = require( './icon.default.png' ),
+      default_tmpl   = require( './tmpl.default.hbs' ),
       all            = {},
       importer       = req => {
           req.keys().forEach( file => {
@@ -14,7 +18,7 @@ const default_params = require('./params.default.json'),
                         data = req( file );
 
                   if( !all[ name ] ) {
-                      all[ name ] = { params : default_params, icon:default_icon, template:default_tmpl };
+                      all[ name ] = { params : default_params, icon : default_icon, template : default_tmpl };
                   }
 
                   if( splt[ 0 ] === 'icon' ) {
@@ -28,9 +32,12 @@ const default_params = require('./params.default.json'),
           } );
       };
 
-
 // context - current folder,  subfolders - true, mask - one subfolder level only
 importer( require.context( '.', true, /^\.\/\w+\/\w+\.\w+$/ ) );
 // IMPORTANT - length of first argument CONTEXT must be reflected in .substring above (+1)
 
-export {all};
+_.each( _.keys( helpers ), id => {
+    Handlebars.registerHelper( id, helpers[ id ] )
+} );
+
+export { all };

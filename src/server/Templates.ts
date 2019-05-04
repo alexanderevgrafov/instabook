@@ -2,12 +2,12 @@ import * as  _ from 'underscore';
 import * as fs from "fs"
 import * as Handlebars from "handlebars";
 import { TemplateDescription } from './interfaces'
+import {helpers} from "../templates/helpers";
 
 const TMPL_PATH = './src/templates/',
-    PAGE_BREAK = `<div style='page-break-before:always;'></div>`,
+    PAGE_BREAK = `<hr/>`,//`<div style='page-break-before:always;'></div>`,
     cache: { [propName: string]: TemplateDescription } = {},
     templates = function (name: string): TemplateDescription {
-
         if (!cache[name]) {
             let tmpl_file_name = '',
                 dir = fs.readdirSync(TMPL_PATH + name, 'utf8');
@@ -38,6 +38,10 @@ const TMPL_PATH = './src/templates/',
 Handlebars.registerHelper('page_break', function () {
     return PAGE_BREAK;
 });
+
+_.each( _.keys( helpers ), id => {
+    Handlebars.registerHelper( id, helpers[ id ] )
+} );
 
 export {
     templates,

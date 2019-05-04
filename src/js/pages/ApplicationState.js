@@ -3,7 +3,7 @@ import { Record, shared, type, define } from 'type-r'
 import * as socketIOClient from 'socket.io-client';
 import Page from 'app/Page'
 import config from 'server/config'
-import { InstaUser, InstaFolder } from 'models/InstaModels'
+import { InstaUser, InstaFolder, InstaFolderItem, InstaMedia } from 'models/InstaModels'
 
 const server_path = (config.ws_server_addr || 'http://localhost') + ':' + config.ws_server_port;
 
@@ -38,7 +38,25 @@ export class ApplicationState extends Record {
         folders      : InstaFolder.Collection,
         open_folder  : shared( InstaFolder ),
         screen       : type( String ).value( '' ),
-        queue        : WsTask.Collection
+        queue        : WsTask.Collection,
+        fake_post    : InstaFolderItem.value( {
+            'media' : {
+                'id'              : '2027892131745506174_296112709',
+                'media_type'      : 1,
+                'image_versions2' : [
+                    {
+                        'width'  : 1080,
+                        'height' : 1074,
+                        'url'    : 'http://instabook.local.com:8000/test_photo.jpg'
+//                            'https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/14947808_1504533962906993_8760241788738503533_n.jpg?_nc_cat=105&_nc_ht=scontent-arn2-1.xx&oh=d850a18e152a1cebf10c8a89692f9aea&oe=5D6B8A7F'//file://e:/localhost/srv/instabook/public
+                    }
+                ],
+                'caption'         : {
+                    'text' : 'Однажды Лесной Ведьме приснилось, что она - река. Она начинала свой путь со склонов гор маленьким ручейком, потом ширилась, набиралась сил и приводила свои воды к огромному шумному океану. Над Ведьмой-Рекой  кружили чайки, а в воде сновали серебристые рыбки. Она была то спокойным и гладким зеркалом, то вдруг бурлила порогами и плевалась пеной. \nПроснулась Лесная Ведьма и обрадовалась- птицы поют, крапива уже доросла до супа и вот-вот робкое зеленое кружево превратится в зелёный костёр.\n#про_леснуюведьму_nastyakis',
+                },
+            }
+
+        } )
     };
 
     ws      = null;
@@ -82,7 +100,7 @@ export class ApplicationState extends Record {
                     if( data.__status === 'ok' ) {
                         resolve( data.answer );
                     } else {
-                        reject( data.msg || '[no error description provided]');
+                        reject( data.msg || '[no error description provided]' );
                     }
 
                     this.queue.remove( task );
