@@ -2,14 +2,14 @@ import React from 'react-type-r'
 import { Record, shared, type, define } from 'type-r'
 import * as socketIOClient from 'socket.io-client';
 import Page from 'app/Page'
-import config from '../../server/config'
-import { InstaUser, InstaFolder } from '../models/InstaModels'
+import config from 'server/config'
+import { InstaUser, InstaFolder } from 'models/InstaModels'
 
 const server_path = (config.ws_server_addr || 'http://localhost') + ':' + config.ws_server_port;
 
 @define
 class WsTask extends Record {
-    static idAttribute = 'signature:';
+    static idAttribute = 'signature';
 
     static attributes = {
         signature : '',
@@ -35,7 +35,7 @@ export class ApplicationState extends Record {
         } ),
         folders      : InstaFolder.Collection,
         open_folder  : shared( InstaFolder ),
-        screen    : '',
+        screen       : type( String ).value( '' ),
         queue        : WsTask.Collection
     };
 
@@ -84,15 +84,13 @@ export class ApplicationState extends Record {
                     }
 
                     this.queue.remove( task );
-                    task.destroy();
-
                 } else {
                     console.error( 'WS answer with unknown sig: ', data );
                 }
             } )
     }
 
-    io( command, params ) {
+    io( command, params = {} ) {
         !this.ws && this.ws_init();
 
         const signature = 'sig' + this.counter++;
@@ -103,12 +101,16 @@ export class ApplicationState extends Record {
         } );
     }
 
-    do_login( params ) {
+    do_login( params = {} ) {
         const { name, pwd } = this.user;
+
+        if( this.user.logged && this.user.name === this.user.info.username ) {
+            return this.get_folders( params );
+        }
 
         const p = this.io( 'login', { name, pwd } ).then( data => {
             this.user.logged = true;
-            this.user.info.set( data, {parse:true});
+            this.user.info.set( data.user, { parse : true } );
             this.get_folders( params );
         } );
 
@@ -124,7 +126,7 @@ export class ApplicationState extends Record {
         return p;
     }
 
-    get_folders( params ) {
+    get_folders( params = {} ) {
         const p = this.io( 'get_folders' ).then(
             data => this.folders.add( data.items, { parse : true } )
         );
@@ -141,7 +143,7 @@ export class ApplicationState extends Record {
         return p;
     }
 
-    get_open_folder( params ) {
+    get_open_folder( params = {} ) {
         const { open_folder } = this;
 
         if( open_folder ) {

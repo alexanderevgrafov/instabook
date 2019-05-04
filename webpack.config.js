@@ -54,12 +54,13 @@ let config = {
     resolve : {
         modules    : [ 'node_modules' ],
         alias      : {
-//            pages : path.resolve( __dirname, 'resources', 'js', 'pages' ),
-//            css   : path.resolve( __dirname, 'resources', 'js', 'css' ),
             app : path.resolve( __dirname, 'src', 'js', 'app' ),
-//            models: path.resolve( __dirname, 'resources', 'js', 'models' ),
             ui  : path.resolve( __dirname, 'src', 'js', 'ui' ),
-            lib : path.resolve( __dirname, 'src', 'js', 'lib' )
+            models : path.resolve( __dirname, 'src', 'js', 'models' ),
+            lib : path.resolve( __dirname, 'src', 'js', 'lib' ),
+            scss   : path.resolve( __dirname, 'src', 'scss' ),
+            templates   : path.resolve( __dirname, 'src', 'templates' ),
+            server   : path.resolve( __dirname, 'src', 'server' )
         },
         extensions : [ '.ts', '.js', '.jsx' ]
     },

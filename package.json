@@ -14,10 +14,10 @@
     "watch": "webpack  --progress --colors --watch --env.develop",
     "build": "webpack  --progress --colors --env.develop",
     "prod": "webpack",
-    "server": "tsc-watch --onSuccess \"node ./server/server/central.js\""
+    "server": "start tsc-watch --onSuccess \"node ./server/server/central.js\""
   },
   "devDependencies": {
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.3.1",
     "classnames": "^2.2.6",
     "clean-webpack-plugin": "^1.0.1",
     "copy-webpack-plugin": "^4.6.0",
@@ -54,6 +54,7 @@
     "html-pdf": "^2.2.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-motion": "^0.5.2",
     "reflect-metadata": "^0.1.13",
     "serve-static": "^1.13.2",

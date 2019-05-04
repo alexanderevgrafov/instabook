@@ -120,12 +120,11 @@ InstaMedia.define({
 //video_dash_manifest: ""
         video_duration: 0,
 //video_versions: (3) [{…}, {…}, {…}],
-        view_count: 0,
-        config: type(PostConfig).toJSON(false)
+        view_count: 0
     },
 
     quickURL() {
-        let small = this.media_type===8 ? this.carousel_media.at(0).quickURL(): this.image_versions2.small();
+        let small = this.media_type === 8 ? this.carousel_media.at(0).quickURL() : this.image_versions2.small();
 
         return small ? small.url : '';
     },
@@ -140,8 +139,9 @@ InstaMedia.define({
 
 @define
 export class InstaFolderItem extends Record {
-    @auto(false) is_selected: boolean;
     @auto media: InstaMedia;
+    @auto(false) is_selected: boolean;
+    @type(PostConfig).toJSON(false).as config: PostConfig;
 
     parse(data) {
         data.id = data.media && data.media.id;
