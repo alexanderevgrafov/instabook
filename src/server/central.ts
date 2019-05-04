@@ -1,11 +1,11 @@
 import 'reflect-metadata'
 import * as socketio from 'socket.io'
+import {logger} from 'type-r'
 import * as _ from 'underscore'
 import { api_map } from './socket_api'
 import {Session} from "./Session";
 
 const path = require('path');
-
 
 import config from './config.js'
 
@@ -13,6 +13,8 @@ _.extend(process.env, config || {}, require('dotenv').config().parsed || {});
 
 const fastify = require('fastify')();
 const ws = socketio.listen(process.env.ws_server_port);
+
+logger.off();
 
 fastify
     .register(require('fastify-static'), {
