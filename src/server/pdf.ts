@@ -1,12 +1,16 @@
 import * as  _ from 'underscore';
 import {WsHandler} from "./interfaces";
 import * as  pdf from 'html-pdf';
-import {templates, PAGE_BREAK} from "./Templates";
-import {PostConfig} from "../js/models/InstaModels";
+import {templates, papers} from "../templates/all_server";
+import {InstaPost, PostConfig} from "../js/models/InstaModels";
 
-const HTML_START = `<html><body>`,
+
+const
+    PAGE_BREAK = `<hr/>`,//`<div style='page-break-before:always;'></div>`,
+    HTML_START = `<html><body>`,
     HTML_END = `</body></html>`;
 
+const PAPER_SIZE = 'a5';
 
 export const PDFgenerate: WsHandler = (s, data) => {
     const {fid} = data,
@@ -23,12 +27,12 @@ export const PDFgenerate: WsHandler = (s, data) => {
         _.map(items, item => {
             const params = {
                 post: item.media.caption && item.media.caption.text || '',
-                media_url: item.media.fullURL()
+                media_url: item.media.fullURL
             };
 
             params.post = params.post.replace(new RegExp(String.fromCharCode(10), 'g'), '<br/>');
 
-            return templates('page0').tmpl(params);
+//            return templates('page0').tmpl(params);
         })
             .join(PAGE_BREAK) + HTML_END;
 
@@ -47,22 +51,25 @@ export const PDFgenerate: WsHandler = (s, data) => {
 };
 
 export const PDF_test: WsHandler = (s, data) => {
-    const config = new PostConfig(data.config),
-        filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') + '_' + config.tmpl + '.pdf';
+    const post = new InstaPost(data.post),
+        filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') + '_' + data.post.config.tmpl + '.pdf',
+        paper_css = papers[PAPER_SIZE];
+
+    const
+        posts_to_render = [post];
 
     let html = HTML_START +
-        _.map([1], () => {
-            const params = {
-                post: data.text || '',
-                media_url: data.url,
-                config: data.config
-            };
+        paper_css +
+        _.map(posts_to_render, post => {
+            const template = templates[post.config.tmpl];
 
-            params.post = params.post.replace(new RegExp(String.fromCharCode(10), 'g'), '<br/>');
-
-            return templates(config.tmpl).tmpl(params);
+            return template.css(post) +
+                `<div class='body'>` + template.page1(post) + '</div>' +
+      //          PAGE_BREAK +
+                `<div class='body'>` + template.page2(post) + '</div>';
         })
-            .join(PAGE_BREAK) + HTML_END;
+            .join(PAGE_BREAK) +
+        HTML_END;
 
     return new Promise((resolve, reject) => {
         pdf.create(html, {

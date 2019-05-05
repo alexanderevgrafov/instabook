@@ -10,7 +10,13 @@ export interface WsInputObject {
 }
 
 export interface TemplateDescription {
-    tmpl: Function,
-    params?: { [propName: string]: string }
-}
+    params: object;
 
+    page1(object): string;
+
+    page2(object): string;
+
+    css(object): string;
+
+    icon: string;
+}

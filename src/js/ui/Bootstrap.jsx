@@ -18,6 +18,7 @@ Form.ControlLinked = ( { valueLink, onChange, accepts, value, ...props } ) =>
             }
         }}
         value={valueLink ? valueLink.value : value}
+        {...props}
     />;
 
 Card.SquareImg = ( { src, className, ...props } ) =>

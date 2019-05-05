@@ -9,11 +9,13 @@ import {
 } from 'ui/Bootstrap'
 import Page from 'app/Page'
 import { ApplicationState } from './ApplicationState'
-import { all as templates } from 'templates/all_templates'
+import { designs as templates, papers } from 'templates/all'
 import 'scss/app.scss'
 import cx from 'classnames'
 import { _t } from 'app/translate'
-import 'templates/helpers';
+
+const PAPER_SIZE = 'a5',
+      PAGE_BREAK_LINE = '[[pagebreak]]';
 
 const LoginView = ( { user, onLogin } ) =>
     <Modal.Dialog>
@@ -53,14 +55,14 @@ const FoldersList = ( { folders, onClick, onBack } ) =>
 
 const FolderItem__ = ( { folder, onClick } ) =>
     <div key={folder.cid} onClick={onClick}>
-        <img src={folder.cover_media.quickURL()} style={{ maxWidth : 300, maxHeight : 300 }} alt=''/>
+        <img src={folder.cover_media.quickURL} style={{ maxWidth : 300, maxHeight : 300 }} alt=''/>
         {folder.collection_name}
     </div>;
 */
 
 const FolderListItem = ( { folder, onClick } ) =>
     <Card className='folder_item cursorable' onClick={onClick}>
-        <Card.SquareImg variant='top' src={folder.cover_media.quickURL()}/>
+        <Card.SquareImg variant='top' src={folder.cover_media.quickURL}/>
         <Card.Body>
             <Card.Title>{folder.collection_name}</Card.Title>
             <Card.Text className='card_text_h_limit'>{
@@ -88,7 +90,7 @@ const FolderView = ( { folder, onBack, onPrepare } ) =>
 /*
 const Post = ( { item, onClick } ) =>
     <div className={cx( 'post_card', { selected : item.is_selected } )} onClick={onClick}>
-        <img src={item.media.quickURL()} className='post_card_img'/>
+        <img src={item.media.quickURL} className='post_card_img'/>
         <div className='post_card_text'>
             {item.media.caption && item.media.caption.text}
         </div>
@@ -97,7 +99,7 @@ const Post = ( { item, onClick } ) =>
 
 const Post = ( { item } ) =>
     <Card className='post_card cursorable' onClick={() => item.is_selected = !item.is_selected}>
-        <Card.SquareImg variant='top' src={item.media.quickURL()}/>
+        <Card.SquareImg variant='top' src={item.media.quickURL}/>
         {item.is_selected ?
          <Card.ImgOverlay>
              <h2><Badge variant='success'>Selected</Badge></h2>
@@ -125,10 +127,10 @@ const Prepare = ( { state, onGetPdf } ) =>
 
 const PostPrepare = ( { post } ) => {
     const params = {
-        media_url  : post.media.quickURL(),
+        media_url  : post.media.quickURL,
         post       : (post.media.caption && post.media.caption.text).replace(
             new RegExp( String.fromCharCode( 10 ), 'g' ), '<br/>' ),
-        page_break : '<hr/>',
+        page_break : PAGE_BREAK_LINE,
         config     : post.config.toJSON()
     }, template  = templates[ post.config.tmpl ];
 
@@ -136,19 +138,28 @@ const PostPrepare = ( { post } ) => {
         return <h4>No template rendered...</h4>;
     }
 
+    const paper_css = papers[PAPER_SIZE],
+          design_css = template.css( post ),
+          side1html = paper_css + design_css + `<div class='body'>` + template.page1( post ) + '</div>',
+          side2html = paper_css + design_css + `<div class='body'>` + template.page2( post ) + '</div>';
+        // html = template.template( params ).split(PAGE_BREAK_LINE),
+        // side1html = paper_css + `<div class='body'>` + html[0] + '</div>',
+        // side2html = paper_css + `<div class='body'>` + html[1] + '</div>';
+
     return <Card className='prepare_page'>
         <Card.Header className='prepare_controls'>
-            <Select valueLink={post.config.linkAt( 'tmpl' )}>
-                {_.map( _.keys( templates ), name => <option value={name} key={name}>{name}</option> )}
-            </Select>
-            {/*<Form.ControlLinked type='number' valueLink={post.config.linkAt('post_font_size')}/>*/}
-            <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400} step={5}/>
+            <Form.ControlLinked as="select" valueLink={post.config.linkAt( 'tmpl' )}>
+                {_.map( _.keys( templates ), name => <option value={name} key={name}>{templates[name].params.native || name}</option> )}
+            </Form.ControlLinked>
+            <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400}/>
         </Card.Header>
         <Card.Body>
             <div className={'prepare_outer_cutter'}>
-                <div className='prepare_preview_box'>
-                    <div className='prepare_preview_page'
-                         dangerouslySetInnerHTML={{ __html : template.template( params ) }}/>
+                <div className={cx('prepare_preview_box', PAPER_SIZE)}>
+                    <div className='prepare_preview_page side1'
+                         dangerouslySetInnerHTML={{ __html : side1html }}/>
+                    <div className='prepare_preview_page side2'
+                         dangerouslySetInnerHTML={{ __html : side2html }}/>
                 </div>
             </div>
         </Card.Body>
@@ -206,9 +217,10 @@ export class ApplicationPage extends React.Component {
 
         Page.notifyOnComplete(
             this.state.io( 'test_pdf', {
-                text   : fake_post.media.caption.text || '',
-                url    : fake_post.media.fullURL(),
-                config : fake_post.config.toJSON()
+                post   : fake_post.toJSON()
+//                text   : fake_post.media.caption.text || '',
+//                url    : fake_post.media.fullURL,
+//                config : fake_post.config.toJSON()
             } ).then(
                 data => {
                     console.log( 'Test PDF is in the folder', data )

@@ -37,44 +37,59 @@ $fade_overflow_post_spread: 3;
 .prepare_outer_cutter {
   padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) ($card-spacer-x);
   margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
-  overflow:hidden;
-  position:relative;
+  overflow: hidden;
+  position: relative;
 
   &::after {
-    content:'';
-    position:absolute;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:$card-spacer-x * $fade_overflow_post_spread;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), white);
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: $card-spacer-x * $fade_overflow_post_spread;
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 0), white);
   }
 }
 
+$preview_box_scale: .5;
 .prepare_preview_box {
   position: relative;
-  width: 74mm;
-  height: 105mm;
   margin: 0 auto;
+
+  &.a5 {
+	width: 150mm; //2X
+	height: 105mm;
+  }
 }
 
 .prepare_preview_page {
   position: absolute;
-  transform: scale(.5);
-  transform-origin: top left;
+  transform: scale($preview_box_scale);
 
   border: 1px solid silver;
-  box-shadow: 5pt 5pt 20pt rgba(0,0,0,.4);
+  box-shadow: 5pt 5pt 20pt rgba(0, 0, 0, .4);
+
+  &.side1 {
+	left: 0;
+	transform-origin: top left;
+  }
+
+  &.side2 {
+	right: 0;
+	transform-origin: top right;
+  }
 }
+
 //----- template css overwrite
 .prepare_preview_page .body {
-  overflow:visible;
+  overflow: visible;
 }
+
 //------------------
 .card_square_img {
-  padding-top:100%; // to keep it squiare;
+  padding-top: 100%; // to keep it squiare;
   background-position: center center;
-  background-size:cover;
+  background-size: cover;
 }
 
 .card_text_h_limit {
