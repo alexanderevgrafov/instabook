@@ -1,4 +1,6 @@
-import {Record, Collection, type, predefine, define, definitions, auto} from 'type-r'
+import * as  _ from 'underscore';
+import {Record, Collection, type, predefine, define, definitions, auto, subsetOf} from 'type-r'
+import { templates } from '../../templates/all_server'
 
 @define
 export class InstaUser extends Record {
@@ -64,9 +66,16 @@ export class InstaCaption extends Record {
 
 @define
 export class PostConfig extends Record {
-    @auto('zero') tmpl: string;
+    @auto tmpl0: string;
+    @auto tmpl1: string;
     @auto(100) post_font_size: number;
+    @auto(0) page_padding: number;
     @auto(false) double_side: boolean;
+
+    initialize(attrs) {
+        this.tmpl0 = this.tmpl0 || (_.find(templates.models, function(t:any){ return t.type==='media'})).name;
+        this.tmpl1 = this.tmpl1 || (_.find(templates.models, function(t:any){ return t.type==='text'})).name;
+    }
 }
 
 @define

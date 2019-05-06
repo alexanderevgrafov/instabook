@@ -12,7 +12,13 @@
         "sourceMap": true,
         "outDir": "./server",
         "alwaysStrict": true,
-        "allowJs": true
+        "allowJs": true,
+
+//    "noEmit": true,
+//    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true
+//    "isolatedModules": true
+
     },
 
     "files": [

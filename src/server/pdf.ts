@@ -1,13 +1,16 @@
+//import React from 'react-type-r'
+//import ReactDOMServer from 'react-dom/server'
 import * as  _ from 'underscore';
 import {WsHandler} from "./interfaces";
 import * as  pdf from 'html-pdf';
-import {templates, papers} from "../templates/all_server";
+import {templates, papers, TemplateModel} from "../templates/all_server";
 import {InstaPost, PostConfig} from "../js/models/InstaModels";
 
+const ReactDOMServer = require('react-dom/server');
 
 const
     PAGE_BREAK = `<hr/>`,//`<div style='page-break-before:always;'></div>`,
-    HTML_START = `<html><body>`,
+    HTML_START = `<html><body style='margin:0'>`,
     HTML_END = `</body></html>`;
 
 const PAPER_SIZE = 'a5';
@@ -52,24 +55,25 @@ export const PDFgenerate: WsHandler = (s, data) => {
 
 export const PDF_test: WsHandler = (s, data) => {
     const post = new InstaPost(data.post),
-        filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') + '_' + data.post.config.tmpl + '.pdf',
+        filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') +
+            '_' + post.config.tmpl0 + '_' + post.config.tmpl1 + '.pdf',
         paper_css = papers[PAPER_SIZE];
 
-    const
-        posts_to_render = [post];
+    const posts_to_render = [post];
 
     let html = HTML_START +
-        paper_css +
         _.map(posts_to_render, post => {
-            const template = templates[post.config.tmpl];
+            const tmpl0 = templates.get(post.config.tmpl0),
+                tmpl1 = templates.get(post.config.tmpl1);
 
-            return template.css(post) +
-                `<div class='body'>` + template.page1(post) + '</div>' +
-      //          PAGE_BREAK +
-                `<div class='body'>` + template.page2(post) + '</div>';
+            return ReactDOMServer.renderToStaticMarkup(tmpl0.page(post, paper_css))
+                + ReactDOMServer.renderToStaticMarkup(tmpl1.page(post, paper_css));
         })
             .join(PAGE_BREAK) +
         HTML_END;
+
+//    console.log(html);
+//   return Promise.resolve('fast');
 
     return new Promise((resolve, reject) => {
         pdf.create(html, {

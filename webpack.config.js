@@ -62,13 +62,13 @@ let config = {
             templates   : path.resolve( __dirname, 'src', 'templates' ),
             server   : path.resolve( __dirname, 'src', 'server' )
         },
-        extensions : [ '.ts', '.js', '.jsx' ]
+        extensions : [ '.ts', '.tsx', '.js', '.jsx' ]
     },
 
     module : {
         rules : [
             {
-                test    : /\.(js|jsx|ts)?$/,
+                test    : /\.(js|jsx|ts|tsx)?$/,
                 exclude : /(node_modules)/,
                 loader  : 'ts-loader'
             },

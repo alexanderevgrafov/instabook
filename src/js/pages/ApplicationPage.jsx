@@ -9,12 +9,12 @@ import {
 } from 'ui/Bootstrap'
 import Page from 'app/Page'
 import { ApplicationState } from './ApplicationState'
-import { designs as templates, papers } from 'templates/all'
+import { templates, papers, TemplateModel } from '../../templates/all_server'
 import 'scss/app.scss'
 import cx from 'classnames'
 import { _t } from 'app/translate'
 
-const PAPER_SIZE = 'a5',
+const PAPER_SIZE      = 'a5',
       PAGE_BREAK_LINE = '[[pagebreak]]';
 
 const LoginView = ( { user, onLogin } ) =>
@@ -126,45 +126,53 @@ const Prepare = ( { state, onGetPdf } ) =>
     </Container>;
 
 const PostPrepare = ( { post } ) => {
-    const params = {
-        media_url  : post.media.quickURL,
-        post       : (post.media.caption && post.media.caption.text).replace(
-            new RegExp( String.fromCharCode( 10 ), 'g' ), '<br/>' ),
-        page_break : PAGE_BREAK_LINE,
-        config     : post.config.toJSON()
-    }, template  = templates[ post.config.tmpl ];
+    const page_style = papers[ PAPER_SIZE ],
+          tmpl0 = templates.get( post.config.tmpl0 ),
+          tmpl1 = templates.get( post.config.tmpl1 ),
 
-    if( !template ) {
-        return <h4>No template rendered...</h4>;
-    }
-
-    const paper_css = papers[PAPER_SIZE],
-          design_css = template.css( post ),
-          side1html = paper_css + design_css + `<div class='body'>` + template.page1( post ) + '</div>',
-          side2html = paper_css + design_css + `<div class='body'>` + template.page2( post ) + '</div>';
-        // html = template.template( params ).split(PAGE_BREAK_LINE),
-        // side1html = paper_css + `<div class='body'>` + html[0] + '</div>',
-        // side2html = paper_css + `<div class='body'>` + html[1] + '</div>';
+          PagePhoto = tmpl0 ? tmpl0.page( post, page_style) : null,
+          PageText = tmpl1 ? tmpl1.page(post, page_style) : null;
 
     return <Card className='prepare_page'>
         <Card.Header className='prepare_controls'>
-            <Form.ControlLinked as="select" valueLink={post.config.linkAt( 'tmpl' )}>
-                {_.map( _.keys( templates ), name => <option value={name} key={name}>{templates[name].params.native || name}</option> )}
+            <Row>
+                <Col>
+            <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl0' )}>
+                {_.map( templates.filter(t=>t.type==='media'),
+                    t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
+                     )
+                }
             </Form.ControlLinked>
-            <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400}/>
+                    <Slider valueLink={post.config.linkAt( 'page_padding' )} min={0} max={100}/>
+                </Col>
+                <Col>
+                    <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl1' )}>
+                        {_.map( templates.filter(t=>t.type==='text'),
+                            t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
+                        )
+                        }
+                    </Form.ControlLinked>
+                    <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400}/>
+                </Col>
+            </Row>
         </Card.Header>
         <Card.Body>
             <div className={'prepare_outer_cutter'}>
-                <div className={cx('prepare_preview_box', PAPER_SIZE)}>
-                    <div className='prepare_preview_page side1'
-                         dangerouslySetInnerHTML={{ __html : side1html }}/>
-                    <div className='prepare_preview_page side2'
-                         dangerouslySetInnerHTML={{ __html : side2html }}/>
+                <div className={cx( 'prepare_preview_box', PAPER_SIZE )}>
+                    <div className='prepare_preview_page side1'>{PagePhoto}</div>
+                    <div className='prepare_preview_page side2'>{PageText}</div>
                 </div>
             </div>
         </Card.Body>
     </Card>
 };
+
+/*
+                    <div className='prepare_preview_page side1'
+                         dangerouslySetInnerHTML={{ __html : side1html }}/>
+                    <div className='prepare_preview_page side2'
+                         dangerouslySetInnerHTML={{ __html : side2html }}/>
+ */
 
 @define
 export class ApplicationPage extends React.Component {
@@ -217,7 +225,7 @@ export class ApplicationPage extends React.Component {
 
         Page.notifyOnComplete(
             this.state.io( 'test_pdf', {
-                post   : fake_post.toJSON()
+                post : fake_post.toJSON()
 //                text   : fake_post.media.caption.text || '',
 //                url    : fake_post.media.fullURL,
 //                config : fake_post.config.toJSON()
