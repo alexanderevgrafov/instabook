@@ -56,6 +56,7 @@
     "less-loader": "^5.0.0",
     "rc-slider": "^8.6.9",
     "react-bootstrap": "^1.0.0-beta.8",
+    "react-dom-server": "^0.0.5",
     "react-motion": "^0.5.2",
     "reflect-metadata": "^0.1.13",
     "serve-static": "^1.13.2",
