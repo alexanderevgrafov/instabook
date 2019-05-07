@@ -4,7 +4,7 @@ import * as  _ from 'underscore';
 import {WsHandler} from "./interfaces";
 import * as  pdf from 'html-pdf';
 import {templates, papers, TemplateModel} from "../templates/all_server";
-import {InstaPost, PostConfig} from "../js/models/InstaModels";
+import {InPost, PostConfig} from "../js/models/InModels";
 
 const ReactDOMServer = require('react-dom/server');
 
@@ -54,7 +54,7 @@ export const PDFgenerate: WsHandler = (s, data) => {
 };
 
 export const PDF_test: WsHandler = (s, data) => {
-    const post = new InstaPost(data.post),
+    const post = new InPost(data.post),
         filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') +
             '_' + post.config.tmpl0 + '_' + post.config.tmpl1 + '.pdf',
         paper_css = papers[PAPER_SIZE];

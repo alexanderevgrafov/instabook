@@ -1,9 +1,9 @@
 import {Record, Collection, type, define, auto} from 'type-r'
-import {InstaFolder} from '../js/models/InstaModels'
+import {InFolder} from '../js/models/InModels'
 import { WsInputObject } from './interfaces'
 
 @define
-class InstaFolderCollection extends InstaFolder.Collection {
+class InFolderCollection extends InFolder.Collection {
 }
 
 @define
@@ -11,7 +11,7 @@ export class Session extends Record {
     @auto client_name: string;
     @auto username: '';
     @auto password: '';
-    @type(InstaFolder.Collection).as folders: Collection<InstaFolder>;
+    @type(InFolder.Collection).as folders: Collection<InFolder>;
     @auto socket: any;
 
     log = (...params) => this.dolog('log', ...params);

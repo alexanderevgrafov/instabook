@@ -19,7 +19,7 @@ export default class Zero extends TemplateModel {
     }
 
     page_in(p) {
-        const photos = p.media_urls,
+        const photos = p.media.hd_urls,
             css = this.getCss(p);
 
         return <div style={css.img_block}>
@@ -28,7 +28,7 @@ export default class Zero extends TemplateModel {
                 <tbody>
                 <tr>
                     {
-                        _.map(p.media_urls.slice(1), url =>
+                        _.map(photos.slice(1), url =>
                             <td style={merge_css(css.photoline_td, {width: (100 / (photos.length - 1)) + '%'})}
                                 key={url}>
                                 <img src={url} style={css.w100} alt=''/>

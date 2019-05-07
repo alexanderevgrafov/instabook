@@ -3,7 +3,7 @@ import { Record, shared, type, define } from 'type-r'
 import * as socketIOClient from 'socket.io-client';
 import Page from 'app/Page'
 import config from 'server/config'
-import { InstaUser, InstaFolder, InstaPost, InstaMedia } from 'models/InstaModels'
+import { InUser, InFolder, InPost, InMedia } from 'models/InModels'
 
 const server_path = (config.ws_server_addr || 'http://localhost') + ':' + config.ws_server_port;
 
@@ -30,180 +30,328 @@ export class ApplicationState extends Record {
             reconnect_attempts : 0
         } ),
         user         : Record.defaults( {
-            info   : InstaUser,
+            info   : InUser,
             name   : 'sveta.evgrafova',//'alexander.evgrafov',  //
             pwd    : 'bp8djx408122',//'lokkol123',   //
             logged : false
         } ),
-        folders      : InstaFolder.Collection,
-        open_folder  : shared( InstaFolder ),
+        folders      : InFolder.Collection,
+        open_folder  : shared( InFolder ),
         screen       : type( String ).value( '' ),
         queue        : WsTask.Collection,
-        fake_post    : InstaPost.value( {
-            'media' : {
-                'id'              : '2027892131745506174_296112709',
-                'media_type'      : 8,
-                'image_versions2' : [
-                    {
-                        'width'  : 1080,
-                        'height' : 1074,
-                        'url'    : 'http://instabook.local.com:8000/test_photo.jpg'
-//                            'https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/14947808_1504533962906993_8760241788738503533_n.jpg?_nc_cat=105&_nc_ht=scontent-arn2-1.xx&oh=d850a18e152a1cebf10c8a89692f9aea&oe=5D6B8A7F'//file://e:/localhost/srv/instabook/public
-                    }
-                ],
-                "carousel_media_count": 7,
-                "carousel_media": [
-                    {
-                        "id": "1973216626352199555_24455934",
-                        "media_type": 1,
-                        "image_versions2": [
-                                {
-                                    "width": 1080,
-                                    "height": 1080,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/c5ff310dfd125fdfc7eb8f21e4ad5740/5D5A2271/t51.2885-15/e35/50703210_114176389685476_4115209539446830584_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MTk3MzIxNjYyNjM1MjE5OTU1NQ%3D%3D.2"
-                                },
-                                {
-                                    "width": 240,
-                                    "height": 240,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/fc2f123695cfb84c0ab7591f4c09c725/5D733079/t51.2885-15/e35/s240x240/50703210_114176389685476_4115209539446830584_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MTk3MzIxNjYyNjM1MjE5OTU1NQ%3D%3D.2"
-                                }
-                            ],
-                        "original_width": 1080,
-                        "original_height": 1080,
-                        "pk": "1973216626352199555",
-                        "carousel_parent_id": "1973216630898853189_24455934"
-                    },
-                    {
-                        "id": "1973216626343800870_24455934",
-                        "media_type": 1,
-                        "image_versions2": [
-                                {
-                                    "width": 1080,
-                                    "height": 1080,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/632fae9aeae9af05d7cc3bf4abd90c8c/5D622E27/t51.2885-15/e35/50649880_2026191530791289_5103200256879662040_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MTk3MzIxNjYyNjM0MzgwMDg3MA%3D%3D.2"
-                                },
-                                {
-                                    "width": 240,
-                                    "height": 240,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/820eeb1458fa7fcda4a546f0e650ac41/5D74F31E/t51.2885-15/e35/s240x240/50649880_2026191530791289_5103200256879662040_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MTk3MzIxNjYyNjM0MzgwMDg3MA%3D%3D.2"
-                                }
-                            ],
-                        "original_width": 1080,
-                        "original_height": 1080,
-                        "pk": "1973216626343800870",
-                        "carousel_parent_id": "1973216630898853189_24455934"
-                    },
-                    {
-                        "id": "1973216626368883036_24455934",
-                        "media_type": 1,
-                        "image_versions2": [
-                                {
-                                    "width": 1080,
-                                    "height": 1080,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/c50e6530c3e419ce4c25ee5a5c4fd5a0/5D5695B1/t51.2885-15/e35/50154926_841318422895601_1497406683810616294_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MTk3MzIxNjYyNjM2ODg4MzAzNg%3D%3D.2"
-                                },
-                                {
-                                    "width": 240,
-                                    "height": 240,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/91456f6df42a0b4855abbd31a23bb325/5D5653B9/t51.2885-15/e35/s240x240/50154926_841318422895601_1497406683810616294_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MTk3MzIxNjYyNjM2ODg4MzAzNg%3D%3D.2"
-                                }
-                            ],
-                        "original_width": 1080,
-                        "original_height": 1080,
-                        "pk": "1973216626368883036",
-                        "carousel_parent_id": "1973216630898853189_24455934"
-                    },
-                    {
-                        "id": "1973216626360709510_24455934",
-                        "media_type": 1,
-                        "image_versions2": [
-                                {
-                                    "width": 1080,
-                                    "height": 1080,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/02ea5f1e5f579d37b97ebea649098452/5D6414F7/t51.2885-15/e35/51919846_321257938596318_2028038927783756114_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MTk3MzIxNjYyNjM2MDcwOTUxMA%3D%3D.2"
-                                },
-                                {
-                                    "width": 240,
-                                    "height": 240,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/eab3fe4d7231e2220f5105b43db94f0e/5D7295FF/t51.2885-15/e35/s240x240/51919846_321257938596318_2028038927783756114_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MTk3MzIxNjYyNjM2MDcwOTUxMA%3D%3D.2"
-                                }
-                            ],
-                        "original_width": 1080,
-                        "original_height": 1080,
-                        "pk": "1973216626360709510",
-                        "carousel_parent_id": "1973216630898853189_24455934"
-                    },
-                    {
-                        "id": "1973216626377340063_24455934",
-                        "media_type": 1,
-                        "image_versions2": [
-                                {
-                                    "width": 1080,
-                                    "height": 1080,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/5749b08bb1c699e459cbc0ff3f1ef812/5D6B8AC5/t51.2885-15/e35/51683093_774867649537139_3854897210252709545_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MTk3MzIxNjYyNjM3NzM0MDA2Mw%3D%3D.2"
-                                },
-                                {
-                                    "width": 240,
-                                    "height": 240,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/45b4b8b882efcd0ff89e6bd618a13057/5D5E63CD/t51.2885-15/e35/s240x240/51683093_774867649537139_3854897210252709545_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MTk3MzIxNjYyNjM3NzM0MDA2Mw%3D%3D.2"
-                                }
-                            ],
-                        "original_width": 1080,
-                        "original_height": 1080,
-                        "pk": "1973216626377340063",
-                        "carousel_parent_id": "1973216630898853189_24455934"
-                    },
-                    {
-                        "id": "1973216626360532730_24455934",
-                        "media_type": 1,
-                        "image_versions2": [
-                                {
-                                    "width": 1080,
-                                    "height": 1080,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/b66e7f6fc71ce85da77dd4d5f683bb7c/5D52AE11/t51.2885-15/e35/51150023_140435476981766_2094958494712810916_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MTk3MzIxNjYyNjM2MDUzMjczMA%3D%3D.2"
-                                },
-                                {
-                                    "width": 240,
-                                    "height": 240,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/e72b6cb920f876ed6eb8dc1c4e9fbae3/5D6EDC19/t51.2885-15/e35/s240x240/51150023_140435476981766_2094958494712810916_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MTk3MzIxNjYyNjM2MDUzMjczMA%3D%3D.2"
-                                }
-                            ],
-                        "original_width": 1080,
-                        "original_height": 1080,
-                        "pk": "1973216626360532730",
-                        "carousel_parent_id": "1973216630898853189_24455934"
-                    },
-                    {
-                        "id": "1973216626385820891_24455934",
-                        "media_type": 1,
-                        "image_versions2": [
-                                {
-                                    "width": 1080,
-                                    "height": 1080,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/beb6ea30427603e1fbc8f59bc7a5bc01/5D6C7213/t51.2885-15/e35/51128823_143690356569784_1145672647464285870_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MTk3MzIxNjYyNjM4NTgyMDg5MQ%3D%3D.2"
-                                },
-                                {
-                                    "width": 240,
-                                    "height": 240,
-                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/14b5343cccc070ee59e45a1e9926cc97/5D772D1B/t51.2885-15/e35/s240x240/51128823_143690356569784_1145672647464285870_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MTk3MzIxNjYyNjM4NTgyMDg5MQ%3D%3D.2"
-                                }
-                            ],
-                        "original_width": 1080,
-                        "original_height": 1080,
-                        "pk": "1973216626385820891",
-                        "carousel_parent_id": "1973216630898853189_24455934"
-                    }
-                ],
-                'caption'         : {
-                    'text' : 'Однажды Лесной Ведьме приснилось, что она - река. Она начинала свой путь со склонов гор маленьким ручейком, потом ширилась, набиралась сил и приводила свои воды к огромному шумному океану. Над Ведьмой-Рекой  кружили чайки, а в воде сновали серебристые рыбки. Она была то спокойным и гладким зеркалом, то вдруг бурлила порогами и плевалась пеной. \nПроснулась Лесная Ведьма и обрадовалась- птицы поют, крапива уже доросла до супа и вот-вот робкое зеленое кружево превратится в зелёный костёр.\n#про_леснуюведьму_nastyakis',
-                },
-            }
-
-        } )
+        fake_post    : InPost
     };
 
     ws      = null;
     counter = 0;
+
+
+    initialize( values, options ) {
+        this.fake_post.set(        {
+            "media": {
+                "taken_at": "1555355284",
+                "pk": "2022789192576284147",
+                "id": "2022789192576284147_3172861554",
+                "device_timestamp": "78390226359912",
+                "media_type": 8,
+                "code": "BwSZA2vAjXz",
+                "client_cache_key": "MjAyMjc4OTE5MjU3NjI4NDE0Nw==.2",
+                "filter_type": 0,
+                "comment_likes_enabled": true,
+                "comment_threading_enabled": true,
+                "has_more_comments": true,
+                "next_max_id": "17887369273320738",
+                "max_num_visible_preview_comments": 2,
+                "preview_comments": [
+                    {
+                        "pk": "18055652158024911",
+                        "user_id": "680548281",
+                        "text": "👏",
+                        "type": 0,
+                        "created_at": "1555401740",
+                        "created_at_utc": "1555401740",
+                        "content_type": "comment",
+                        "status": "Active",
+                        "bit_flags": 0,
+                        "user": {
+                            "pk": "680548281",
+                            "username": "fruity1502",
+                            "full_name": "Alexey Krivov",
+                            "is_private": false,
+                            "profile_pic_url": "https://scontent-arn2-1.cdninstagram.com/vp/5d5fc19d28f11c6071052afd32b13224/5D6AC075/t51.2885-19/s150x150/52357991_534785143711805_8679347225463095296_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com",
+                            "profile_pic_id": "1997051004593161135_680548281",
+                            "is_verified": false
+                        },
+                        "did_report_as_spam": false,
+                        "share_enabled": false,
+                        "media_id": "2022789192576284147",
+                        "has_liked_comment": false,
+                        "comment_like_count": 0
+                    },
+                    {
+                        "pk": "17887369273320738",
+                        "user_id": "2066376884",
+                        "text": "Очень красиво",
+                        "type": 0,
+                        "created_at": "1555427128",
+                        "created_at_utc": "1555427128",
+                        "content_type": "comment",
+                        "status": "Active",
+                        "bit_flags": 0,
+                        "user": {
+                            "pk": "2066376884",
+                            "username": "lena_n_tin",
+                            "full_name": "Elena Tinaeva",
+                            "is_private": true,
+                            "profile_pic_url": "https://scontent-arn2-1.cdninstagram.com/vp/a95803b89d5be474f98e36335853c9a2/5D638450/t51.2885-19/s150x150/11939297_815505521899356_1928077678_a.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com",
+                            "is_verified": false
+                        },
+                        "did_report_as_spam": false,
+                        "share_enabled": false,
+                        "media_id": "2022789192576284147",
+                        "has_translation": true,
+                        "has_liked_comment": false,
+                        "comment_like_count": 0
+                    }
+                ],
+                "can_view_more_preview_comments": true,
+                "comment_count": 8,
+                "inline_composer_display_condition": "impression_trigger",
+                "carousel_media_count": 7,
+                "carousel_media": [
+                    {
+                        "id": "2022789188205740737_3172861554",
+                        "media_type": 1,
+                        "image_versions2": {
+                            "candidates": [
+                                {
+                                    "width": 960,
+                                    "height": 960,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/f3782e9a8011f8f2650c60d759699ab9/5D67794C/t51.2885-15/e35/56883669_355409668516173_9012153309832829048_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=8&ig_cache_key=MjAyMjc4OTE4ODIwNTc0MDczNw%3D%3D.2"
+                                },
+                                {
+                                    "width": 240,
+                                    "height": 240,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/dff8f3a3ffe3bbe7e7765eadefc777a1/5D6F8444/t51.2885-15/e35/s240x240/56883669_355409668516173_9012153309832829048_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MjAyMjc4OTE4ODIwNTc0MDczNw%3D%3D.2"
+                                }
+                            ]
+                        },
+                        "original_width": 960,
+                        "original_height": 960,
+                        "pk": "2022789188205740737",
+                        "carousel_parent_id": "2022789192576284147_3172861554"
+                    },
+                    {
+                        "id": "2022789188197331129_3172861554",
+                        "media_type": 1,
+                        "image_versions2": {
+                            "candidates": [
+                                {
+                                    "width": 960,
+                                    "height": 960,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/a1aa396d539929c36d6ed1afbd35e8e1/5D67B483/t51.2885-15/e35/56444374_2464942496895394_1148038550991845822_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=8&ig_cache_key=MjAyMjc4OTE4ODE5NzMzMTEyOQ%3D%3D.2"
+                                },
+                                {
+                                    "width": 240,
+                                    "height": 240,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/dc5c2d8497a85932b42129356273a55e/5D58ADBA/t51.2885-15/e35/s240x240/56444374_2464942496895394_1148038550991845822_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MjAyMjc4OTE4ODE5NzMzMTEyOQ%3D%3D.2"
+                                }
+                            ]
+                        },
+                        "original_width": 960,
+                        "original_height": 960,
+                        "pk": "2022789188197331129",
+                        "carousel_parent_id": "2022789192576284147_3172861554"
+                    },
+                    {
+                        "id": "2022789188205783744_3172861554",
+                        "media_type": 1,
+                        "image_versions2": {
+                            "candidates": [
+                                {
+                                    "width": 1080,
+                                    "height": 1080,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/4fb4f2db2dc201defa8a82405fc4cd65/5D68BFCF/t51.2885-15/e35/57348341_869399180098948_7704523472205296709_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MjAyMjc4OTE4ODIwNTc4Mzc0NA%3D%3D.2"
+                                },
+                                {
+                                    "width": 240,
+                                    "height": 240,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/51dd29a8679c57462e5ec54cdf31289c/5D7799C7/t51.2885-15/e35/s240x240/57348341_869399180098948_7704523472205296709_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MjAyMjc4OTE4ODIwNTc4Mzc0NA%3D%3D.2"
+                                }
+                            ]
+                        },
+                        "original_width": 1080,
+                        "original_height": 1080,
+                        "pk": "2022789188205783744",
+                        "carousel_parent_id": "2022789192576284147_3172861554"
+                    },
+                    {
+                        "id": "2022789188188932667_3172861554",
+                        "media_type": 1,
+                        "image_versions2": {
+                            "candidates": [
+                                {
+                                    "width": 960,
+                                    "height": 960,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/561b0ded5b51a8b1ed63e955c4745647/5D675AE5/t51.2885-15/e35/58019637_412306662658236_263951558937010797_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=8&ig_cache_key=MjAyMjc4OTE4ODE4ODkzMjY2Nw%3D%3D.2"
+                                },
+                                {
+                                    "width": 240,
+                                    "height": 240,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/95293ab710147b3669b17ccf1d1c7b40/5D5EE4C2/t51.2885-15/e35/s240x240/58019637_412306662658236_263951558937010797_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MjAyMjc4OTE4ODE4ODkzMjY2Nw%3D%3D.2"
+                                }
+                            ]
+                        },
+                        "original_width": 960,
+                        "original_height": 960,
+                        "pk": "2022789188188932667",
+                        "carousel_parent_id": "2022789192576284147_3172861554"
+                    },
+                    {
+                        "id": "2022789188239438467_3172861554",
+                        "media_type": 1,
+                        "image_versions2": {
+                            "candidates": [
+                                {
+                                    "width": 960,
+                                    "height": 960,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/04fe2e0791d3a1ade4380695af461be8/5D5266C5/t51.2885-15/e35/56526848_346332766005085_2461572908192207082_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=8&ig_cache_key=MjAyMjc4OTE4ODIzOTQzODQ2Nw%3D%3D.2"
+                                },
+                                {
+                                    "width": 240,
+                                    "height": 240,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/6cf3cdecfcc189ff2edeb15497073d68/5D729ACD/t51.2885-15/e35/s240x240/56526848_346332766005085_2461572908192207082_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MjAyMjc4OTE4ODIzOTQzODQ2Nw%3D%3D.2"
+                                }
+                            ]
+                        },
+                        "original_width": 960,
+                        "original_height": 960,
+                        "pk": "2022789188239438467",
+                        "carousel_parent_id": "2022789192576284147_3172861554"
+                    },
+                    {
+                        "id": "2022789188222586314_3172861554",
+                        "media_type": 1,
+                        "image_versions2": {
+                            "candidates": [
+                                {
+                                    "width": 1080,
+                                    "height": 1080,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/b17e54b06ab4a7e9d1ec23225362e8f6/5D54B8AB/t51.2885-15/e35/56551830_680447889036243_3237016944374094664_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MjAyMjc4OTE4ODIyMjU4NjMxNA%3D%3D.2"
+                                },
+                                {
+                                    "width": 240,
+                                    "height": 240,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/3006537757d5ee90c3531655cfff191a/5D58EBA3/t51.2885-15/e35/s240x240/56551830_680447889036243_3237016944374094664_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MjAyMjc4OTE4ODIyMjU4NjMxNA%3D%3D.2"
+                                }
+                            ]
+                        },
+                        "original_width": 1080,
+                        "original_height": 1080,
+                        "pk": "2022789188222586314",
+                        "carousel_parent_id": "2022789192576284147_3172861554"
+                    },
+                    {
+                        "id": "2022789188214309384_3172861554",
+                        "media_type": 1,
+                        "image_versions2": {
+                            "candidates": [
+                                {
+                                    "width": 1080,
+                                    "height": 1079,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/af164ee0f024dd15630a1981400bc663/5D5AA8A1/t51.2885-15/e35/57311718_431307224296455_5348795871031373094_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&se=7&ig_cache_key=MjAyMjc4OTE4ODIxNDMwOTM4NA%3D%3D.2"
+                                },
+                                {
+                                    "width": 240,
+                                    "height": 239,
+                                    "url": "https://scontent-arn2-1.cdninstagram.com/vp/9a3bd1d4ed17740a979f7eb80fff605a/5D57E6A9/t51.2885-15/e35/s240x240/57311718_431307224296455_5348795871031373094_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com&ig_cache_key=MjAyMjc4OTE4ODIxNDMwOTM4NA%3D%3D.2"
+                                }
+                            ]
+                        },
+                        "original_width": 1080,
+                        "original_height": 1079,
+                        "pk": "2022789188214309384",
+                        "carousel_parent_id": "2022789192576284147_3172861554"
+                    }
+                ],
+                "can_see_insights_as_brand": false,
+                "location": {
+                    "pk": "515398340",
+                    "name": "Petropavlovsk Kamchatski, Kamchatskaya Oblast', Russia",
+                    "address": "",
+                    "city": "",
+                    "short_name": "Petropavlovsk Kamchatski",
+                    "lng": 158.65000000000001,
+                    "lat": 53.0167,
+                    "external_source": "facebook_places",
+                    "facebook_places_id": "104968619538312"
+                },
+                "lat": 53.0167,
+                "lng": 158.65000000000001,
+                "user": {
+                    "pk": "3172861554",
+                    "username": "alexeytinaev",
+                    "full_name": "Alexey  Tinaev",
+                    "is_private": false,
+                    "profile_pic_url": "https://scontent-arn2-1.cdninstagram.com/vp/b02551b37835f567a319639fbf9e5388/5D690EA2/t51.2885-19/s150x150/49907521_773577126374513_299385119183994880_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com",
+                    "profile_pic_id": "1712920544074083160_3172861554",
+                    "friendship_status": {
+                        "following": true,
+                        "outgoing_request": false,
+                        "is_bestie": false
+                    },
+                    "is_verified": false,
+                    "has_anonymous_profile_picture": false,
+                    "is_unpublished": false,
+                    "is_favorite": false
+                },
+                "can_viewer_reshare": true,
+                "caption_is_edited": false,
+                "like_count": 418,
+                "has_liked": false,
+                "photo_of_you": false,
+                "caption": {
+                    "pk": "18047757292077717",
+                    "user_id": "3172861554",
+                    "text": "Взошли на Вилючинский вулкан. В награду получили потрясающий вид на Тихий  океан и Камчатку, и спуск почти 7км длиной и 2100м перепадом. Это незабываемо! Вулканы кажутся удивительно большими, когда смотришь на них издалека. А тут раз, и 5,5 часа спустя уже смотришь сверху вниз. 🏔️ #alpindustria #альпиндустрия #arcteryx #GORETEX #skiguide #mountains #offpiste #rmgaguides #skiguide #rmga #камчатка #kamchatka #kamchatkaski #skitour #skitouring #скитур \nЭкипировка: @goretexeu @arcteryx_ru #movementskis Fly 115, GO 109",
+                    "type": 1,
+                    "created_at": "1555355286",
+                    "created_at_utc": "1555355286",
+                    "content_type": "comment",
+                    "status": "Active",
+                    "bit_flags": 0,
+                    "user": {
+                        "pk": "3172861554",
+                        "username": "alexeytinaev",
+                        "full_name": "Alexey  Tinaev",
+                        "is_private": false,
+                        "profile_pic_url": "https://scontent-arn2-1.cdninstagram.com/vp/b02551b37835f567a319639fbf9e5388/5D690EA2/t51.2885-19/s150x150/49907521_773577126374513_299385119183994880_n.jpg?_nc_ht=scontent-arn2-1.cdninstagram.com",
+                        "profile_pic_id": "1712920544074083160_3172861554",
+                        "friendship_status": {
+                            "following": true,
+                            "outgoing_request": false,
+                            "is_bestie": false
+                        },
+                        "is_verified": false,
+                        "has_anonymous_profile_picture": false,
+                        "is_unpublished": false,
+                        "is_favorite": false
+                    },
+                    "did_report_as_spam": false,
+                    "share_enabled": false,
+                    "media_id": "2022789192576284147",
+                    "has_translation": true
+                },
+                "can_viewer_save": true,
+                "has_viewer_saved": true,
+                "saved_collection_ids": [
+                    "17939704498255728",
+                    "18023306578072901"
+                ],
+                "organic_tracking_token": "eyJ2ZXJzaW9uIjo1LCJwYXlsb2FkIjp7ImlzX2FuYWx5dGljc190cmFja2VkIjpmYWxzZSwidXVpZCI6IjY1ZDcyMjY1ZjRkZTQyNzliNDZhMDczY2M0NDQ0OTE4MjAyMjc4OTE5MjU3NjI4NDE0NyIsInNlcnZlcl90b2tlbiI6IjE1NTY3MTgxNzYzNzd8MjAyMjc4OTE5MjU3NjI4NDE0N3wzOTYyOTI0MTU3fDU2YjI4ZmQ3MTczNDZiYzE4NWM4ZTE2ZWI4NDQ2MTJlMGYyZWNkYzkzMjhmZmI2ZWVkM2ZmYzk3ZDBjMzhkZDAifSwic2lnbmF0dXJlIjoiIn0="
+            }
+        }, {parse:true})
+    }
 
     ws_init() {
         const { server } = this;

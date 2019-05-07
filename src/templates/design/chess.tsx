@@ -19,7 +19,7 @@ export default class chess extends TemplateModel {
     }
 
     page_in(p) {
-        const photos = p.media_urls,
+        const photos = p.media.hd_urls,
             css = this.getCss(p),
             sq = Math.min(9, Math.ceil(Math.sqrt(photos.length)));
 

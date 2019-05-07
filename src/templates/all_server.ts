@@ -9,7 +9,7 @@ import chess from './design/chess';
 import comic_sans from './design/comic_sans';
 
 import {TemplateModel} from "./design/TemplateModel";
-//import {InstaMedia} from "../js/models/InstaModels";
+//import {InMedia} from "../js/models/InModels";
 
 const template_classes = {
     img1_9, times_new, chess, comic_sans

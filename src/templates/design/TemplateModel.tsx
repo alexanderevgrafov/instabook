@@ -1,7 +1,7 @@
 import * as  _ from 'underscore';
 import * as React from 'react'
 import {define, type, auto, Record} from 'type-r'
-import {InstaPost, PostConfig} from '../../js/models/InstaModels';
+import {InPost, PostConfig} from '../../js/models/InModels';
 
 export const merge_css = (a, b) => _.extend({}, a, b || {});
 
@@ -56,7 +56,7 @@ export class TemplateModel extends Record {
         return {}
     }
 
-    getCss(p: InstaPost): any {
+    getCss(p: InPost): any {
         const css0 = this.getGlobalStyles(p.config),
             css = this.getStyles(p.config);
 
@@ -67,13 +67,13 @@ export class TemplateModel extends Record {
         return css;
     }
 
-    page_in(p: InstaPost) {
+    page_in(p: InPost) {
         const css = this.getCss(p);
 
         return <div style={css.post} dangerouslySetInnerHTML={{__html: p.post_text}}/>
     }
 
-    page(p: InstaPost, page_css: object): object | null {
+    page(p: InPost, page_css: object): object | null {
         const css = this.getCss(p);
 
         return <div style={_.extend({}, css.body, page_css)}>

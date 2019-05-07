@@ -17,6 +17,19 @@
 .post_card_img {
 }
 
+.square_picture {
+  position:relative;
+  width:100%;
+  padding-top:100%;
+  overflow:hidden;
+
+  > img {
+	position:absolute;
+	top:0;
+	width:100%;
+  }
+}
+
 .post_card_text {
 }
 
