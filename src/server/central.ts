@@ -38,7 +38,7 @@ fastify.get('/api/*', (request, reply) => {
 
 const start = async () => {
     try {
-        await fastify.listen(process.env.server_port || 3000);
+        await fastify.listen(process.env.server_port || 3000, "0.0.0.0");
         fastify.log.info('server listening on ' + fastify.server.address().port)
     } catch (err) {
         fastify.log.error(err);
@@ -70,3 +70,4 @@ ws.on('connection', socket => {
 });
 
 start();
+

@@ -52,6 +52,7 @@ $fade_overflow_post_spread: 3;
   margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
   overflow: hidden;
   position: relative;
+  transform-origin: top left;
 
   &::after {
 	content: '';

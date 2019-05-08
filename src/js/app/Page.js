@@ -1,11 +1,25 @@
 import React from 'react-type-r'
 //import ReactDOM from 'react-dom'
+import { Events }       from 'type-r'
 import 'lib/notify'
 import 'lib/notify.css'
 
 const Page = {
     globalState : null,   // Common state available for all pages
     msgHash     : {},
+    isResizing  : false,
+
+    forceResize() {
+        if( !this.isResizing ) {
+            this.isResizing = true;
+            try {
+                this.trigger( 'page-resize' );
+            }
+            finally {
+                this.isResizing = false;
+            }
+        }
+    },
 
     notifyOnComplete( promise, { error, success, before } ) {
         const beforeMsg = before && this.createMsg( {
@@ -127,4 +141,4 @@ const Page = {
     },
 };
 
-export default Page;
+export default _.extend( Page, Events );

@@ -10,9 +10,10 @@ import {
 import Page from 'app/Page'
 import { ApplicationState } from './ApplicationState'
 import { templates, papers, TemplateModel } from '../../templates/all_server'
-import 'scss/app.scss'
+import * as platform from 'platform'
 import cx from 'classnames'
 import { _t } from 'app/translate'
+import 'scss/app.scss'
 
 const PAPER_SIZE      = 'a5',
       PAGE_BREAK_LINE = '[[pagebreak]]';
@@ -62,7 +63,7 @@ const FolderItem__ = ( { folder, onClick } ) =>
 
 const FolderListItem = ( { folder, onClick } ) =>
     <Card className='folder_item cursorable' onClick={onClick}>
-        <Card.SquareImg variant='top' src={folder.cover_media.urls[0]}/>
+        <Card.SquareImg variant='top' src={folder.cover_media.urls[ 0 ]}/>
         <Card.Body>
             <Card.Title>{folder.collection_name}</Card.Title>
             <Card.Text className='card_text_h_limit'>{
@@ -97,16 +98,22 @@ const Post = ( { item, onClick } ) =>
     </div>;
 */
 
-const SquarePicture = ({urls}) => {
-    if (urls.length > 1) {
-        const scale=100-urls.length*8;
+const SquarePicture = ( { urls } ) => {
+    if( urls.length > 1 ) {
+        const scale = 100 - urls.length * 8;
 
-        return   <div className='square_picture'>{
-            _.map(urls, (u,i)=><img src={u} style={{width:scale+'%', top:i*(100-scale)/(urls.length-1)+'%', left:i*(100-scale)/(urls.length-1)+'%', zIndex:40-i}}/>)
+        return <div className='card-img square_picture'>{
+            _.map( urls, ( u, i ) =>
+                <img src={u} style={{
+                    width  : scale + '%',
+                    top    : i * (100 - scale) / (urls.length - 1) + '%',
+                    left   : i * (100 - scale) / (urls.length - 1) + '%',
+                    zIndex : 40 - i
+                }} alt='' key={i}/> )
         }</div>
 
     } else {
-        return   <div className='square_picture'><img src={urls[0]}/></div>
+        return <div className='square_picture'><img src={urls[ 0 ]} alt={null}/></div>
     }
 };
 
@@ -123,44 +130,71 @@ const Post = ( { item } ) =>
         </Card.Body>
     </Card>;
 
-const Prepare = ( { state, onGetPdf } ) =>
-    <Container className='prepare_container'>
-        <Row>
-            <Button onClick={() => state.screen = ''} label='Go back'/>
-            <Button onClick={onGetPdf} label='Get PDF'/>
-        </Row>
-        <Row>
-            {_.map( state.open_folder.selection, post =>
-                <Col lg={3} md={2} key={post.cid}>
-                    <PostPrepare post={post}/>
-                </Col>
-            )}
-        </Row>
-    </Container>;
+export class Prepare extends React.Component {
+    static state = {
+        screen_scale : 1
+    };
 
-const PostPrepare = ( { post } ) => {
+    componentWillMount() {
+        const myname = `${platform.name} ${platform.version} ${platform.layout} ${platform.os}`;
+
+        this.state.io( 'hola', myname ).then(
+            () => console.log( 'on hola' )
+        );
+
+        this.listenTo( Page, 'page-resize', this.onPageResize );
+    }
+
+    onPageResize() {
+        const width = this.refs.container ? this.refs.container.offsetWidth : 1000;
+
+        this.state.screen_scale = Math.max( 1, width / 610 );
+    }
+
+    render() {
+        const { state, onGetPdf } = this.props;
+
+        return (
+            <Container className='prepare_container' ref='container'>
+                <Row>
+                    <Button onClick={() => state.screen = ''} label='Go back'/>
+                    <Button onClick={onGetPdf} label='Get PDF'/>
+
+                </Row>
+                <Row>
+                    {_.map( state.open_folder.selection, post =>
+                        <Col lg={3} md={2} key={post.cid}>
+                            <PostPrepare post={post} scale={this.state.screen_scale}/>
+                        </Col>
+                    )}
+                </Row>
+            </Container>);
+    }
+}
+
+const PostPrepare = ( { post, scale } ) => {
     const page_style = papers[ PAPER_SIZE ],
-          tmpl0 = templates.get( post.config.tmpl0 ),
-          tmpl1 = templates.get( post.config.tmpl1 ),
+          tmpl0      = templates.get( post.config.tmpl0 ),
+          tmpl1      = templates.get( post.config.tmpl1 ),
 
-          PagePhoto = tmpl0 ? tmpl0.page( post, page_style) : null,
-          PageText = tmpl1 ? tmpl1.page(post, page_style) : null;
+          PagePhoto  = tmpl0 ? tmpl0.page( post, page_style ) : null,
+          PageText   = tmpl1 ? tmpl1.page( post, page_style ) : null;
 
     return <Card className='prepare_page'>
         <Card.Header className='prepare_controls'>
             <Row>
                 <Col>
-            <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl0' )}>
-                {_.map( templates.filter(t=>t.type==='media'),
-                    t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
-                     )
-                }
-            </Form.ControlLinked>
+                    <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl0' )}>
+                        {_.map( templates.filter( t => t.type === 'media' ),
+                            t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
+                        )
+                        }
+                    </Form.ControlLinked>
                     <Slider valueLink={post.config.linkAt( 'page_padding' )} min={0} max={100}/>
                 </Col>
                 <Col>
                     <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl1' )}>
-                        {_.map( templates.filter(t=>t.type==='text'),
+                        {_.map( templates.filter( t => t.type === 'text' ),
                             t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
                         )
                         }
@@ -170,7 +204,7 @@ const PostPrepare = ( { post } ) => {
             </Row>
         </Card.Header>
         <Card.Body>
-            <div className={'prepare_outer_cutter'}>
+            <div className={'prepare_outer_cutter'} style={scale < 1 ? { transform : 'scale(' + scale + ')' } : null}>
                 <div className={cx( 'prepare_preview_box', PAPER_SIZE )}>
                     <div className='prepare_preview_page side1'>{PagePhoto}</div>
                     <div className='prepare_preview_page side2'>{PageText}</div>
@@ -192,9 +226,17 @@ export class ApplicationPage extends React.Component {
     static state = ApplicationState;
 
     componentWillMount() {
-        this.state.io( 'hola', 'Shark' ).then(
+        const myname = `${platform.name} ${platform.version} ${platform.layout} ${platform.os}`;
+
+        this.state.io( 'hola', myname ).then(
             () => console.log( 'on hola' )
         );
+
+        $( window ).on( 'resize', e => Page.forceResize( e ) );
+    }
+
+    componentWillUnmount() {
+        $( window ).off( 'resize', e => Page.forceResize( e ) );
     }
 
     onInstLoginClick = () => {
@@ -267,17 +309,21 @@ export class ApplicationPage extends React.Component {
 
         switch( cur_step ) {
             case 'login':
-                View = <Row>
-                    <Col>
-                        <LoginView user={user} onLogin={this.onInstLoginClick}/>
-                    </Col>
-                    <Col>
-                        <Button onClick={this.getFakePdf} label='Get test PDF'/>
-                    </Col>
-                    <Col>
-                        <PostPrepare post={state.fake_post}/>
-                    </Col>
-                </Row>;
+                View = [ <Row key={0}>
+                             <Col>
+                                 <LoginView user={user} onLogin={this.onInstLoginClick}/>
+                             </Col>
+                         </Row>,
+                         <Row key={1}>
+                             <Col>
+                                 <Button onClick={this.getFakePdf} label='Get test PDF'/>
+                             </Col>
+                         </Row>,
+                         <Row key={2}>
+                             <Col>
+                                 <PostPrepare post={state.fake_post}/>
+                             </Col>
+                         </Row> ];
                 break;
             case 'folders':
                 View = <FoldersList folders={folders}
