@@ -49,16 +49,18 @@ $fade_overflow_post_spread: 3;
 
 .prepare_outer_cutter {
 //  padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) ($card-spacer-x);
-//  margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
+  //  margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
   overflow: hidden;
   transform-origin: top left;
-  padding-bottom: $fade_overflow_post_spread * $card-spacer-x;
-  margin-bottom: -$fade_overflow_post_spread * $card-spacer-x;
+//  padding-bottom: $fade_overflow_post_spread * $card-spacer-x;
+//  margin-bottom: -$fade_overflow_post_spread * $card-spacer-x;
+    padding: 0 ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) 0;
+   margin: 0 (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) 0;
   position:absolute;
-  top: $card-spacer-x;
+  top: 0;//$card-spacer-x;
   bottom: $card-spacer-x;
-  left: $card-spacer-x;
-  right: $card-spacer-x;
+  left: 0;//$card-spacer-x;
+  right: 0;//$card-spacer-x;
 
 
   &::after {
@@ -79,7 +81,7 @@ $preview_box_scale: .5;
   transform-origin: top left;
 
   &.a5 {
-	width: 150mm; //2X
+	width: 73mm; //2X
 	height: 105mm;
   }
 }
@@ -91,12 +93,14 @@ $preview_box_scale: .5;
   border: 1px solid silver;
   box-shadow: 5pt 5pt 20pt rgba(0, 0, 0, .4);
 
-  &.side1 {
+  transform-origin: top left;
+
+  &.si-de1 {
 	left: 0;
 	transform-origin: top left;
   }
 
-  &.side2 {
+  &.si-de2 {
 	right: 0;
 	transform-origin: top right;
   }
