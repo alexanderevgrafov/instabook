@@ -135,13 +135,7 @@ export class Prepare extends React.Component {
         screen_scale : 1
     };
 
-    componentWillMount() {
-        const myname = `${platform.name} ${platform.version} ${platform.layout} ${platform.os}`;
-
-        this.state.io( 'hola', myname ).then(
-            () => console.log( 'on hola' )
-        );
-
+    componentDidMount() {
         this.listenTo( Page, 'page-resize', this.onPageResize );
     }
 
@@ -164,7 +158,7 @@ export class Prepare extends React.Component {
                 <Row>
                     {_.map( state.open_folder.selection, post =>
                         <Col lg={3} md={2} key={post.cid}>
-                            <PostPrepare post={post} scale={this.state.screen_scale}/>
+                            <PreparePost post={post} scale={this.state.screen_scale}/>
                         </Col>
                     )}
                 </Row>
@@ -172,46 +166,69 @@ export class Prepare extends React.Component {
     }
 }
 
-const PostPrepare = ( { post, scale } ) => {
-    const page_style = papers[ PAPER_SIZE ],
-          tmpl0      = templates.get( post.config.tmpl0 ),
-          tmpl1      = templates.get( post.config.tmpl1 ),
+@define
+class PreparePost extends React.Component {
+    static state = {
+        screen_scale : 1
+    };
 
-          PagePhoto  = tmpl0 ? tmpl0.page( post, page_style ) : null,
-          PageText   = tmpl1 ? tmpl1.page( post, page_style ) : null;
+    componentWillMount() {
+        this.listenTo( Page, 'page-resize', this.onPageResize );
+    }
 
-    return <Card className='prepare_page'>
-        <Card.Header className='prepare_controls'>
-            <Row>
-                <Col>
-                    <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl0' )}>
-                        {_.map( templates.filter( t => t.type === 'media' ),
-                            t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
-                        )
-                        }
-                    </Form.ControlLinked>
-                    <Slider valueLink={post.config.linkAt( 'page_padding' )} min={0} max={100}/>
-                </Col>
-                <Col>
-                    <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl1' )}>
-                        {_.map( templates.filter( t => t.type === 'text' ),
-                            t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
-                        )
-                        }
-                    </Form.ControlLinked>
-                    <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400}/>
-                </Col>
-            </Row>
-        </Card.Header>
-        <Card.Body>
-            <div className={'prepare_outer_cutter'} style={scale < 1 ? { transform : 'scale(' + scale + ')' } : null}>
-                <div className={cx( 'prepare_preview_box', PAPER_SIZE )}>
-                    <div className='prepare_preview_page side1'>{PagePhoto}</div>
-                    <div className='prepare_preview_page side2'>{PageText}</div>
+    onPageResize() {
+        const width = this.refs.container ? this.refs.container.offsetWidth : 1000;
+
+        this.state.screen_scale = Math.min( 1, width / 567 );
+    }
+
+    render() {
+        const { post } = this.props,
+              scale = this.state.screen_scale;
+
+        const page_style = papers[ PAPER_SIZE ],
+              tmpl0      = templates.get( post.config.tmpl0 ),
+              tmpl1      = templates.get( post.config.tmpl1 ),
+
+              PagePhoto  = tmpl0 ? tmpl0.page( post, page_style ) : null,
+              PageText   = tmpl1 ? tmpl1.page( post, page_style ) : null;
+
+        return <Card className='prepare_page'>
+            <Card.Header className='prepare_controls'>
+                <Row>
+                    <Col>
+                        <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl0' )}>
+                            {_.map( templates.filter( t => t.type === 'media' ),
+                                t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
+                            )
+                            }
+                        </Form.ControlLinked>
+                        <Slider valueLink={post.config.linkAt( 'page_padding' )} min={0} max={100}/>
+                    </Col>
+                    <Col>
+                        <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl1' )}>
+                            {_.map( templates.filter( t => t.type === 'text' ),
+                                t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
+                            )
+                            }
+                        </Form.ControlLinked>
+                        <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400}/>
+                    </Col>
+                </Row>
+            </Card.Header>
+            <Card.Body>
+                <div className={'prepare_outer_cutter'} ref='container'>
+                    <div className={cx( 'prepare_preview_box', PAPER_SIZE )}
+
+                         style={scale < 1 ? { transform : 'scale(' + scale + ')' } : null}
+                    >
+                        <div className='prepare_preview_page side1'>{PagePhoto}</div>
+                        <div className='prepare_preview_page side2'>{PageText}</div>
+                    </div>
                 </div>
-            </div>
-        </Card.Body>
-    </Card>
+            </Card.Body>
+        </Card>
+    }
 };
 
 /*
@@ -321,7 +338,7 @@ export class ApplicationPage extends React.Component {
                          </Row>,
                          <Row key={2}>
                              <Col>
-                                 <PostPrepare post={state.fake_post}/>
+                                 <PreparePost post={state.fake_post}/>
                              </Col>
                          </Row> ];
                 break;

@@ -48,11 +48,18 @@
 $fade_overflow_post_spread: 3;
 
 .prepare_outer_cutter {
-  padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) ($card-spacer-x);
-  margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
+//  padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) ($card-spacer-x);
+//  margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
   overflow: hidden;
-  position: relative;
   transform-origin: top left;
+  padding-bottom: $fade_overflow_post_spread * $card-spacer-x;
+  margin-bottom: -$fade_overflow_post_spread * $card-spacer-x;
+  position:absolute;
+  top: $card-spacer-x;
+  bottom: $card-spacer-x;
+  left: $card-spacer-x;
+  right: $card-spacer-x;
+
 
   &::after {
 	content: '';
@@ -69,6 +76,7 @@ $preview_box_scale: .5;
 .prepare_preview_box {
   position: relative;
   margin: 0 auto;
+  transform-origin: top left;
 
   &.a5 {
 	width: 150mm; //2X
