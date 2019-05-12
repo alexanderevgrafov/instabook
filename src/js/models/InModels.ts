@@ -62,6 +62,7 @@ export class PostConfig extends Record {
     @auto(100) post_font_size: number;
     @auto(0) page_padding: number;
     @auto(false) double_side: boolean;
+    @auto(0) random_seed: number;
 
     initialize(attrs) {
         this.tmpl0 = this.tmpl0 || (_.find(templates.models, function (t: any) {
@@ -70,6 +71,7 @@ export class PostConfig extends Record {
         this.tmpl1 = this.tmpl1 || (_.find(templates.models, function (t: any) {
             return t.type === 'text'
         })).name;
+        this.random_seed = this.random_seed || (new Date).getTime() % 100000;
     }
 }
 
