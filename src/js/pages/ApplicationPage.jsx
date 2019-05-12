@@ -215,13 +215,13 @@ class PreparePost extends React.Component {
                      controls={
                          <Row>
                              <Col>
-                                 <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl1' )}>
-                                     {_.map( templates.filter( t => t.type === 'text' ),
+                                 <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl0' )}>
+                                     {_.map( templates.filter( t => t.type === 'media' ),
                                          t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
                                      )
                                      }
                                  </Form.ControlLinked>
-                                 <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400}/>
+                                 <Slider valueLink={post.config.linkAt( 'page_padding' )} min={0} max={100}/>
                              </Col>
                          </Row>
                      }
@@ -233,13 +233,13 @@ class PreparePost extends React.Component {
                      controls={
                          <Row>
                              <Col>
-                                 <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl0' )}>
-                                     {_.map( templates.filter( t => t.type === 'media' ),
+                                 <Form.ControlLinked as='select' valueLink={post.config.linkAt( 'tmpl1' )}>
+                                     {_.map( templates.filter( t => t.type === 'text' ),
                                          t => <option value={t.name} key={t.name}>{t.native || t.name}</option>
                                      )
                                      }
                                  </Form.ControlLinked>
-                                 <Slider valueLink={post.config.linkAt( 'page_padding' )} min={0} max={100}/>
+                                 <Slider valueLink={post.config.linkAt( 'post_font_size' )} min={20} max={400}/>
                              </Col>
                          </Row>
                      }
