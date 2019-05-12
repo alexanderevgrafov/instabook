@@ -23,21 +23,28 @@ export const PDFgenerate: WsHandler = (s, data) => {
         throw new Error('Folder not located by its FID');
     }
 
-    const items = _.map(data.items, id => folder.items.get(id)),
-        filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_') + '.pdf';
+    const posts_to_render = [];
 
-    let html = HTML_START +
-        _.map(items, item => {
-            const params = {
-                post: item.media.caption && item.media.caption.text || '',
-                media_url: item.media.fullURL
-            };
+    _.mapObject(data.items, (conf, id) => {
+        const x = folder.items.get(id);
+        x.config.set(conf, {parse: true});
+        posts_to_render.push(x);
+    });
 
-            params.post = params.post.replace(new RegExp(String.fromCharCode(10), 'g'), '<br/>');
+    const filename = './pdf/' + new Date().toLocaleString().replace(new RegExp('\\W', 'g'), '_')
+        + '_' + posts_to_render.length * 2 + '_pages.pdf',
+        paper_css = papers[PAPER_SIZE];
 
-//            return templates('page0').tmpl(params);
+    const html = HTML_START +
+        _.map(posts_to_render, post => {
+            const tmpl0 = templates.get(post.config.tmpl0),
+                tmpl1 = templates.get(post.config.tmpl1);
+
+            return ReactDOMServer.renderToStaticMarkup(tmpl0.page(post, paper_css))
+                + ReactDOMServer.renderToStaticMarkup(tmpl1.page(post, paper_css));
         })
-            .join(PAGE_BREAK) + HTML_END;
+            .join(PAGE_BREAK) +
+        HTML_END;
 
     return new Promise((resolve, reject) => {
         pdf.create(html, {
@@ -51,6 +58,7 @@ export const PDFgenerate: WsHandler = (s, data) => {
                 resolve(html);
             })
     });
+
 };
 
 export const PDF_test: WsHandler = (s, data) => {
@@ -71,9 +79,6 @@ export const PDF_test: WsHandler = (s, data) => {
         })
             .join(PAGE_BREAK) +
         HTML_END;
-
-//    console.log(html);
-//   return Promise.resolve('fast');
 
     return new Promise((resolve, reject) => {
         pdf.create(html, {

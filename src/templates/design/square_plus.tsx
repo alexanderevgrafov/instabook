@@ -56,11 +56,11 @@ export default class square_pl extends TemplateModel {
                 </tbody>
             </table>
             {
-                tds.length && <table style={css.photoline}>
+                tds.length ? <table style={css.photoline}>
                     <tbody>
                     <tr key='last'>{tds}</tr>
                     </tbody>
-                </table>
+                </table> : null
             }
         </div>;
     }

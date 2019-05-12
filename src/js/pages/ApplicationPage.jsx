@@ -130,6 +130,7 @@ const Post = ( { item } ) =>
         </Card.Body>
     </Card>;
 
+@define
 export class Prepare extends React.Component {
     static state = {
         screen_scale : 1
@@ -186,6 +187,7 @@ class PreparePost extends React.Component {
     };
 
     componentDidMount() {
+        this.props.scale ||
         this.listenTo( Page, 'page-resize', this.onPageResize );
         this.onPageResize();
     }
@@ -197,8 +199,9 @@ class PreparePost extends React.Component {
     }
 
     render() {
-        const { post } = this.props,
-              scale    = this.state.screen_scale;
+        const { post, scale:props_scale } = this.props,
+              { screen_scale : state_scale}  = this.state,
+              scale = props_scale || state_scale;
 
         const page_style = papers[ PAPER_SIZE ],
               tmpl0      = templates.get( post.config.tmpl0 ),
@@ -296,10 +299,18 @@ export class ApplicationPage
     };
 
     onGetPdf = cmd => {
-        const { open_folder } = this.state;
+        const { open_folder } = this.state,
+        items = {};
+
+        _.each(open_folder.selection, x => {
+            items[x.id] = x.config.toJSON()
+        });
 
         Page.notifyOnComplete(
-            this.state.io( 'gen_pdf', { fid : open_folder.id, items : _.pluck( open_folder.selection, 'id' ) } ).then(
+            this.state.io( 'gen_pdf', {
+                fid : open_folder.id,
+                items
+            } ).then(
                 data => {
                     console.log( 'PDF is in the folder', data )
                 }
