@@ -43,13 +43,13 @@ export default class Template extends TemplateModel {
         };
     }
 
-    photoline = (ps, css, rnd) =>
+    photoline = (ps, css, rnd, h, w) =>
         ps.length ?
             _.map(ps, (url, i) =>
                 <img style={
                     merge_css(css.p_float, {
-                    width: 100/ps.length + '%',
-                    left:100*i/ps.length + '%',
+                    width: h + 'mm',
+                    left:(w*i/ps.length + (w/ps.length - h)/2) + 'mm',
                         transform: 'scale(' + (.8 + .5*SCALE_VARIATION - SCALE_VARIATION*rnd()) + ') rotate('+(-ROTATE_UPTO/2+ ROTATE_UPTO*rnd())+'deg)',
                         WebkitTransform: 'scale(' + (.8 + .5*SCALE_VARIATION - SCALE_VARIATION*rnd()) + ') rotate('+(-ROTATE_UPTO/2+ ROTATE_UPTO*rnd())+'deg)'
                 })}
@@ -57,26 +57,27 @@ export default class Template extends TemplateModel {
             )
             : null;
 
-    page_in(p) {
+    page_in(p, area) {
         const photos = p.media.hd_urls,
             css = this.getCss(p),
             photo0 = photos.shift(),
             mid = Math.ceil(photos.length / 2),
             photos_top = photos.slice(0, mid),
             photos_bot = photos.slice(mid),
-            random = Utils.random_seed(p.config.random_seed);
+            random = Utils.random_seed(p.config.random_seed),
+            line_h = (area.height - area.width) / ((!photos_bot.length && photos_top.length) ? 1 : 2)
+        ;
 
         return <div style={css.img_block}>
         <div style={merge_css(css.photo_line_abs, {})}>
 
-        {this.photoline(photos_top, css, random)}
+        {this.photoline(photos_top, css, random, line_h, area.width)}
         </div>
-
-            <img src={photo0} style={merge_css(css.img0, {top: mid ? 100 / (mid * 2) + '%' : 0})} alt=''/>
+            <img src={photo0} style={merge_css(css.img0, {top: line_h + 'mm'})} alt=''/>
             { photos_bot.length ?
-        <div style={merge_css(css.photo_line_abs, {bottom: 0, height: mid ? 100 / mid  + '%' : 0})}>
+        <div style={merge_css(css.photo_line_abs, {bottom: 0, height: line_h  + 'mm'})}>
 
-        {this.photoline(photos_bot, css, random)}
+        {this.photoline(photos_bot, css, random, line_h, area.width)}
     </div> : null }
 
     </div>;

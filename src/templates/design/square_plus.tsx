@@ -18,11 +18,15 @@ export default class square_pl extends TemplateModel {
         };
     }
 
-    page_in(p) {
+    page_in(p, area) {
         const photos = p.media.hd_urls,
             css = this.getCss(p),
             sq = Math.floor(Math.sqrt(photos.length)),
-            rest = photos.length - sq * sq;
+            rest = photos.length - sq * sq,
+        // TODO: Assuming photos are all square, need non-square photos support
+            row_h = area.height - area.width,
+            rest_h = rest > 0 ? Math.min(row_h, area.width / rest) : 0
+        ;
 
         const trs = [];
 
@@ -44,8 +48,8 @@ export default class square_pl extends TemplateModel {
         for (let i = 0; i < rest; i++) {
             const url = photos[sq * sq + i];
             url &&
-            tds.push(<td style={merge_css(css.photoline_td, {width: (100 / Math.max(rest, sq)) + '%'})} key={i}>
-                <img src={url} style={css.w100} alt=''/>
+            tds.push(<td style={merge_css(css.photoline_td, css.to_center, {width: (100 / Math.max(rest, sq)) + '%'})} key={i}>
+                <img src={url} style={merge_css(css.inline_block, {width: rest_h + 'mm'})} alt=''/>
             </td>);
         }
 

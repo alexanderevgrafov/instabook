@@ -18,9 +18,13 @@ export default class Zero extends TemplateModel {
         };
     }
 
-    page_in(p) {
+    page_in(p, area) {
         const photos = p.media.hd_urls,
-            css = this.getCss(p);
+            css = this.getCss(p),
+            // TODO: Assuming photos are all square, need non-square photos support
+            row_h = area.height - area.width,
+            photos_h = photos.length > 1 ? Math.min(row_h, area.width / (photos.length - 1)) : 0
+        ;
 
         return <div style={css.img_block}>
             <img src={photos[0]} style={css.img0} alt=''/>
@@ -29,9 +33,9 @@ export default class Zero extends TemplateModel {
                 <tr>
                     {
                         _.map(photos.slice(1), url =>
-                            <td style={merge_css(css.photoline_td, {width: (100 / (photos.length - 1)) + '%'})}
+                            <td style={merge_css(css.photoline_td, css.to_center, {width: (100 / (photos.length - 1)) + '%'})}
                                 key={url}>
-                                <img src={url} style={css.w100} alt=''/>
+                                <img src={url} style={merge_css(css.inline_block,{width:photos_h+'mm'})} alt=''/>
                             </td>)
                     }
                 </tr>

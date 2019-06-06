@@ -32,8 +32,14 @@ fastify
         }
     });
 
-fastify.get('/api/*', (request, reply) => {
-    reply.send({hello: 'world ' + request.params['*']})
+//fastify.get('/api/*', (request, reply) => {    reply.send({hello: 'world ' + request.params['*']}) });
+
+fastify.setNotFoundHandler({ // TODO: think here seriuosly how to solve sequirity, routes and so on...
+//    preValidation: (req, reply, next) => {        next()    },
+//    preHandler: (req, reply, next) => {            next()    }
+}, function (request, reply) {
+    // Default not found handler with preValidation and preHandler hooks
+    reply.sendFile('index.html') // serving path.join(__dirname, 'public', 'myHtml.html') directly
 });
 
 const start = async () => {
