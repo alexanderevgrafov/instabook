@@ -6,6 +6,6 @@ polyfill();
 
 import React  from 'react-type-r'
 import * as ReactDOM from 'react-dom'
-import { ApplicationPage } from "./pages/ApplicationPage";
+import Application from "./pages/index";
 
-ReactDOM.render( React.createElement( ApplicationPage, {} ), document.getElementById( 'app-mount-root' ) );
+ReactDOM.render( React.createElement( Application, {} ), document.getElementById( 'app-mount-root' ) );
