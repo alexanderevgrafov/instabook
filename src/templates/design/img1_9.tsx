@@ -35,12 +35,13 @@ export default class Zero extends TemplateModel {
                         _.map(photos.slice(1), url =>
                             <td style={merge_css(css.photoline_td, css.to_center, {width: (100 / (photos.length - 1)) + '%'})}
                                 key={url}>
-                                <img src={url} style={merge_css(css.inline_block,{width:photos_h+'mm'})} alt=''/>
+                                <img src={url} style={merge_css(css.inline_block, {width: photos_h + 'mm'})} alt=''/>
                             </td>)
                     }
                 </tr>
                 </tbody>
             </table>
+            <div style={css.copyright}>&copy; {p.media.user.username}</div>
         </div>;
     }
 }

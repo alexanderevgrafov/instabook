@@ -6,7 +6,7 @@ import {papers} from '../all_server';
 
 const MAX_PADDING = 60; // mm
 
-export const merge_css = (...args : object[]) => _.extend({}, ...args);
+export const merge_css = (...args: object[]) => _.extend({}, ...args);
 
 @define
 export class TemplateModel extends Record {
@@ -45,15 +45,26 @@ export class TemplateModel extends Record {
             },
 
             to_center: {
-                textAlign:'center'
+                textAlign: 'center'
             },
 
             inline_block: {
-                display:'inline-block'
+                display: 'inline-block'
             },
 
             post: {
                 fontSize: p.post_font_size / 100 + 'em'
+            },
+
+            copyright: {
+                position: 'absolute',
+                bottom: '1mm',
+                right: '1mm',
+                zIndex: 100,
+                font: '12pt Arial',
+                padding: '.6mm 2mm',
+                backgroundColor: 'rgba(255,255,255,.5)',
+                borderRadius: '2mm'
             }
         };
 

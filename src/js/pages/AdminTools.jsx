@@ -35,7 +35,9 @@ class TmplTesterModel extends Record {
      }*/
 
     onTmplChange() {
+        localStorage.setItem('tmpl_name', this.tmpl);
         this.posts.each( post => post.config.tmpl0 = this.tmpl );
+
     }
 }
 
@@ -44,7 +46,7 @@ export default class TmplTester extends React.Component {
     static state = TmplTesterModel;
 
     componentWillMount() {
-        this.state.tmpl = templates.at( 0 ).name;
+        this.state.tmpl = localStorage.getItem('tmpl_name') || templates.at( 0 ).name;
 
         const models =
                   _.map( _.range( 0, 11 ), num => {
@@ -54,7 +56,7 @@ export default class TmplTester extends React.Component {
                       model.id = num;
                       model.media.pictures.reset( model.media.pictures.slice( 0, num ) );
                       model.config = {
-                          tmpl0          : this.state.tmpl0,
+                          tmpl0          : this.state.tmpl,
                           page_padding   : this.state.padding,
                           post_font_size : this.state.font_size
                       };
@@ -97,7 +99,7 @@ export default class TmplTester extends React.Component {
                             ThePage = tmpl0 ? tmpl0.page( post, PAPER_SIZE ) : null;
 
                         return <div className={cx( 'prepare_preview_box', 'admin_tools_preview', PAPER_SIZE )}
-                                    style={scale < 1 ? { transform : 'scale(' + scale + ')' } : null}>
+                                    style={scale < 1 ? { transform : 'scale(' + scale + ')' } : null} key={post.cid}>
                             <div className='prepare_preview_page side1'>{ThePage}</div>
                         </div>;
                     }
