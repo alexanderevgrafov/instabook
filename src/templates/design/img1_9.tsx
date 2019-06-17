@@ -28,7 +28,7 @@ export default class Zero extends TemplateModel {
 
         return <div style={css.img_block}>
             <img src={photos[0]} style={css.img0} alt=''/>
-            <table style={css.photoline}>
+            <table style={merge_css(css.photoline, { width:area.width}) }>
                 <tbody>
                 <tr>
                     {

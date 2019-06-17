@@ -5,6 +5,7 @@ import {InPost, PostConfig} from '../../js/models/InModels';
 import {papers} from '../all_server';
 
 const MAX_PADDING = 60; // mm
+const PRINT_SIDE_PADDING = 10;
 
 export const merge_css = (...args: object[]) => _.extend({}, ...args);
 
@@ -69,7 +70,11 @@ export class TemplateModel extends Record {
         };
 
         _.map(['top', 'bottom', 'left', 'right'],
-            n => css.content_wrapper[n] = p.page_padding * MAX_PADDING / 100 + 'mm');
+            n => css.content_wrapper[n] =
+                p.page_padding * MAX_PADDING / 100
+                + ( n==='right' && this.type === 'media' ? PRINT_SIDE_PADDING : 0)
+                + ( n==='left' && this.type === 'text' ? PRINT_SIDE_PADDING : 0)
+                + 'mm');
 
         return css;
     }
@@ -101,8 +106,8 @@ export class TemplateModel extends Record {
             page_width = parseInt(page_css.width),
             page_height = parseInt(page_css.height),
             area = {
-                width: page_width - (p.config.page_padding * MAX_PADDING * 2 / 100),
-                height: page_height - (p.config.page_padding * MAX_PADDING * 2 / 100),
+                width: page_width - parseInt(css.content_wrapper.right) - parseInt(css.content_wrapper.left),
+                height: page_height - parseInt(css.content_wrapper.bottom) - parseInt(css.content_wrapper.top),
             };
 
         return <div style={_.extend({}, css.body, page_css)}>

@@ -4,7 +4,6 @@ import Page from 'app/Page';
 import { Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { Button } from 'ui/Bootstrap';
 import cx from 'classnames';
-import { papers } from 'templates/papers';
 import { templates } from 'templates/all_server';
 import { Slider } from 'ui/controls/Slider';
 
@@ -85,12 +84,11 @@ export class PreparePost extends React.Component {
               { screen_scale : state_scale}  = this.state,
               scale = props_scale || state_scale;
 
-        const page_style = papers[ PAPER_SIZE ],
-              tmpl0      = templates.get( post.config.tmpl0 ),
+        const tmpl0      = templates.get( post.config.tmpl0 ),
               tmpl1      = templates.get( post.config.tmpl1 ),
 
-              PagePhoto  = tmpl0 ? tmpl0.page( post, page_style ) : null,
-              PageText   = tmpl1 ? tmpl1.page( post, page_style ) : null;
+              PagePhoto  = tmpl0 ? tmpl0.page( post, PAPER_SIZE ) : null,
+              PageText   = tmpl1 ? tmpl1.page( post, PAPER_SIZE ) : null;
 
         return [
             <div className='prepare_page_size_ref' ref='container' key={2}/>,
