@@ -3,7 +3,7 @@ import {TemplateModel, merge_css} from "./design/TemplateModel";
 const papers = {
         a5: {
             margin: 0,
-            width: '147mm',
+            width: '148mm',
             height: '209mm',
             overflow: 'hidden',
             boxSizing: 'border-box',
@@ -11,6 +11,7 @@ const papers = {
             lineHeight: '1.6',
             textAlign: 'left',
             fontSize: '14pt',
+            pageBreakAfter: 'always'
         }
     }
 ;

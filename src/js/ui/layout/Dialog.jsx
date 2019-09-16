@@ -1,4 +1,4 @@
-import React, { define } from 'react-type-r';
+import React, { define } from 'react-mvx';
 import cx                from 'classnames';
 import { Collection }    from 'type-r';
 import * as ReactDOM     from 'react-dom';

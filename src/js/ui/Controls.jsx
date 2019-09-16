@@ -1,4 +1,4 @@
-import React from 'react-type-r'
+import React from 'react-mvx'
 import { Slider, Range } from './controls/Slider';
 import { Input, NumberInput, TextInput, TextArea } from './controls/Input'
 import { Select } from './controls/Select.jsx'

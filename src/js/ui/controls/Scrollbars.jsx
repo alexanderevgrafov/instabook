@@ -1,4 +1,4 @@
-import React, { define, mixins } from 'react-type-r';
+import React, { define, mixins } from 'react-mvx';
 import { control_focus_mixin, FormControl } from './Common.jsx';
 import { Protect } from './Protect.jsx'
 import Page from 'app/Page'

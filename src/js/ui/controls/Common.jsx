@@ -1,4 +1,4 @@
-import React, { define } from 'react-type-r'
+import React, { define } from 'react-mvx'
 import * as ReactDOM from 'react-dom'
 
 @define

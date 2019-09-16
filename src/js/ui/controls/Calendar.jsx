@@ -1,4 +1,4 @@
-import React, { define } from 'react-type-r';
+import React, { define } from 'react-mvx';
 import { TransitionMotion, spring } from 'react-motion'
 import * as Moment from 'moment'
 import cx from 'classnames'

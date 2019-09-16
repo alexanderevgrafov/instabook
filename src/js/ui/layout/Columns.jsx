@@ -1,6 +1,6 @@
 import 'type-r/globals'
 import { define } from 'type-r'
-import React from 'react-type-r';
+import React from 'react-mvx';
 import cx from 'classnames';
 
 @define

@@ -39,6 +39,19 @@
 .prepare_pages_list {
 }
 
+.prepare_page_size_ref {
+  position:absolute;
+  height: 0;
+  left: $card-spacer-x;
+  right: $card-spacer-x;
+}
+
+.prepare_page_col {
+  width: 100mm;
+  flex-basis: 100mm;
+  margin: 0 1rem 1rem 0;
+}
+
 .prepare_page {
 }
 
@@ -48,10 +61,20 @@
 $fade_overflow_post_spread: 3;
 
 .prepare_outer_cutter {
-  padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) ($card-spacer-x);
-  margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
+//  padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) ($card-spacer-x);
+  //  margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) (-$card-spacer-x);
   overflow: hidden;
-  position: relative;
+  transform-origin: top left;
+//  padding-bottom: $fade_overflow_post_spread * $card-spacer-x;
+//  margin-bottom: -$fade_overflow_post_spread * $card-spacer-x;
+    padding: ($card-spacer-x) ($card-spacer-x) ($fade_overflow_post_spread * $card-spacer-x) 0;
+   margin: (-$card-spacer-x) (-$card-spacer-x) (-$fade_overflow_post_spread * $card-spacer-x) 0;
+  position:absolute;
+  top: 0;//$card-spacer-x;
+  bottom: $card-spacer-x;
+  left: 0;//$card-spacer-x;
+  right: 0;//$card-spacer-x;
+
 
   &::after {
 	content: '';
@@ -68,9 +91,10 @@ $preview_box_scale: .5;
 .prepare_preview_box {
   position: relative;
   margin: 0 auto;
+  transform-origin: top left;
 
   &.a5 {
-	width: 150mm; //2X
+	width: 73mm; //2X
 	height: 105mm;
   }
 }
@@ -82,15 +106,15 @@ $preview_box_scale: .5;
   border: 1px solid silver;
   box-shadow: 5pt 5pt 20pt rgba(0, 0, 0, .4);
 
-  &.side1 {
-	left: 0;
-	transform-origin: top left;
-  }
+  transform-origin: top left;
 
-  &.side2 {
-	right: 0;
-	transform-origin: top right;
+  > div {
+	overflow: visible !important;
   }
+}
+
+.admin_tools_preview{
+  margin:0 -25mm -30mm 0;
 }
 
 //----- template css overwrite

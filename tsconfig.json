@@ -13,12 +13,7 @@
         "outDir": "./server",
         "alwaysStrict": true,
         "allowJs": true,
-
-//    "noEmit": true,
-//    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
-//    "isolatedModules": true
-
+        "allowSyntheticDefaultImports": true
     },
 
     "files": [

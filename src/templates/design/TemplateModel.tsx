@@ -2,8 +2,12 @@ import * as  _ from 'underscore';
 import * as React from 'react'
 import {define, type, auto, Record} from 'type-r'
 import {InPost, PostConfig} from '../../js/models/InModels';
+import {papers} from '../all_server';
 
-export const merge_css = (a, b) => _.extend({}, a, b || {});
+const MAX_PADDING = 60; // mm
+const PRINT_SIDE_PADDING = 10;
+
+export const merge_css = (...args: object[]) => _.extend({}, ...args);
 
 @define
 export class TemplateModel extends Record {
@@ -41,13 +45,36 @@ export class TemplateModel extends Record {
                 padding: 0
             },
 
+            to_center: {
+                textAlign: 'center'
+            },
+
+            inline_block: {
+                display: 'inline-block'
+            },
+
             post: {
                 fontSize: p.post_font_size / 100 + 'em'
+            },
+
+            copyright: {
+                position: 'absolute',
+                bottom: '1mm',
+                right: '1mm',
+                zIndex: 100,
+                font: '12pt Arial',
+                padding: '.6mm 2mm',
+                backgroundColor: 'rgba(255,255,255,.5)',
+                borderRadius: '2mm'
             }
         };
 
         _.map(['top', 'bottom', 'left', 'right'],
-            n => css.content_wrapper[n] = p.page_padding * 60 / 100 + 'pt');
+            n => css.content_wrapper[n] =
+                p.page_padding * MAX_PADDING / 100
+                + ( n==='right' && this.type === 'media' ? PRINT_SIDE_PADDING : 0)
+                + ( n==='left' && this.type === 'text' ? PRINT_SIDE_PADDING : 0)
+                + 'mm');
 
         return css;
     }
@@ -67,18 +94,25 @@ export class TemplateModel extends Record {
         return css;
     }
 
-    page_in(p: InPost) {
+    page_in(p: InPost, area: object) {
         const css = this.getCss(p);
 
         return <div style={css.post} dangerouslySetInnerHTML={{__html: p.post_text}}/>
     }
 
-    page(p: InPost, page_css: object): object | null {
-        const css = this.getCss(p);
+    page(p: InPost, paper_size: string): object | null {
+        const page_css = papers[paper_size],
+            css = this.getCss(p),
+            page_width = parseInt(page_css.width),
+            page_height = parseInt(page_css.height),
+            area = {
+                width: page_width - parseInt(css.content_wrapper.right) - parseInt(css.content_wrapper.left),
+                height: page_height - parseInt(css.content_wrapper.bottom) - parseInt(css.content_wrapper.top),
+            };
 
         return <div style={_.extend({}, css.body, page_css)}>
             <div style={css.content_wrapper}>
-                {this.page_in(p)}
+                {this.page_in(p, area)}
             </div>
         </div>;
     }

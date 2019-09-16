@@ -18,9 +18,10 @@ export default class chess extends TemplateModel {
         };
     }
 
-    page_in(p) {
+    page_in(p, area) {
         const photos = p.media.hd_urls,
             css = this.getCss(p),
+            ratio = area.height/area.width,
             sq = Math.min(9, Math.ceil(Math.sqrt(photos.length)));
 
         const trs = [];
@@ -45,6 +46,7 @@ export default class chess extends TemplateModel {
                 {trs}
                 </tbody>
             </table>
+            <div style={css.copyright}>&copy; {p.media.user.username}</div>
         </div>;
     }
 }

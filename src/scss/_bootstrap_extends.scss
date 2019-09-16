@@ -1,0 +1,15 @@
+.prepare_page.card .card-body {
+  ///**/flex: 1 1 auto;
+  margin: 1.25rem;
+  padding-top: 144%;   // (paper height/paper width) * 100
+  position: relative;
+
+}
+
+.card-img {
+	z-index:1
+}
+
+.card-img-overlay {
+	z-index:2;
+}
