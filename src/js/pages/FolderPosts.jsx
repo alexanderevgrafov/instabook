@@ -1,6 +1,6 @@
 import { Badge, Card, Col, Container, Row } from 'react-bootstrap';
 import { Button } from 'ui/Bootstrap';
-import React from 'react-type-r';
+import React from 'react-mvx';
 
 export const FoldersList = ( { folders, onClick, onBack } ) =>
     <Row className='folders_list_container'>

@@ -1,4 +1,4 @@
-import React from 'react-type-r'
+import React from 'react-mvx'
 import { define } from 'type-r'
 import {
     Container, Row, Col,

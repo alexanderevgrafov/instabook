@@ -4,7 +4,7 @@ import 'whatwg-fetch'
 import { polyfill } from 'es6-promise';
 polyfill();
 
-import React  from 'react-type-r'
+import React  from 'react-mvx'
 import * as ReactDOM from 'react-dom'
 import Application from "./pages/index";
 

@@ -1,5 +1,5 @@
 import { define } from 'type-r';
-import React from 'react-type-r';
+import React from 'react-mvx';
 import Page from 'app/Page';
 import { Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { Button } from 'ui/Bootstrap';

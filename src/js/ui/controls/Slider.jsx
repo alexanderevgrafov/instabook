@@ -1,4 +1,4 @@
-import React, { Link, define } from 'react-type-r';
+import React, { Link, define } from 'react-mvx';
 import cx from 'classnames';
 import Slider, { Range } from 'rc-slider';
 import 'rc-slider/dist/rc-slider.css'

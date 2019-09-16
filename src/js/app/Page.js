@@ -1,4 +1,4 @@
-import React from 'react-type-r'
+import React from 'react-mvx'
 //import ReactDOM from 'react-dom'
 import { Events }       from 'type-r'
 import 'lib/notify'

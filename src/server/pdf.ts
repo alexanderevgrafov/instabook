@@ -1,4 +1,4 @@
-//import React from 'react-type-r'
+//import React from 'react-mvx'
 //import ReactDOMServer from 'react-dom/server'
 import * as  _ from 'underscore';
 import * as fs from 'fs'

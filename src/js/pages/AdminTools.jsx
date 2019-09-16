@@ -1,4 +1,4 @@
-import React from 'react-type-r';
+import React from 'react-mvx';
 import { Record, define, type } from 'type-r';
 import { Route, Switch } from 'react-router';
 import { Badge, Col, Container, Form, Row } from 'react-bootstrap';

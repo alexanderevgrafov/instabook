@@ -1,4 +1,4 @@
-import React, { define }  from 'react-type-r'
+import React, { define }  from 'react-mvx'
 import cx                 from 'classnames'
 import { Motion, spring } from 'react-motion'
 import Page               from 'app/Page'

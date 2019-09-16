@@ -1,4 +1,4 @@
-import React from 'react-type-r'
+import React from 'react-mvx'
 import { Record, shared, type, define } from 'type-r'
 import * as socketIOClient from 'socket.io-client';
 import Page from 'app/Page'

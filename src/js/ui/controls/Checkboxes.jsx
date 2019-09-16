@@ -1,4 +1,4 @@
-import React, { define } from 'react-type-r'
+import React, { define } from 'react-mvx'
 import { FormControl }   from './FormControl'
 import cx                from 'classnames';
 
