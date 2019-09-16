@@ -3771,6 +3771,14 @@ react-motion@^0.5.2:
     prop-types "^15.5.8"
     raf "^3.1.0"
 
+react-mvx@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-mvx/-/react-mvx-3.0.0.tgz#d96c18d621cac94002ed397325df728cfc89e6fd"
+  integrity sha512-weP2r98FtQ4fGaGSRX2dsVKsAL7CcMkwwHxJ3qJbPEo7SqO1CzYTVg1bvhkurvLu7RNk5R94JQD985P8w4/WOA==
+  dependencies:
+    tslib "*"
+    valuelink "^1.0.0"
+
 react-overlays@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-1.2.0.tgz#205368eeb0a5fb0b7f9b717fa7a12d518500abdb"
@@ -3825,13 +3833,6 @@ react-transition-group@^4.0.0:
     dom-helpers "^3.4.0"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
-
-react-type-r@3.0.0-a001:
-  version "3.0.0-a001"
-  resolved "https://registry.yarnpkg.com/react-type-r/-/react-type-r-3.0.0-a001.tgz#8e2a2190b4a85dacc17afe43477a3f9b2f5c77e7"
-  dependencies:
-    tslib "*"
-    valuelink Volicon/NestedLink
 
 react@^16.8.1:
   version "16.8.6"
@@ -4758,9 +4759,10 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
 
-type-r@^3.0.0:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/type-r/-/type-r-3.0.8.tgz#d12294223be12a26867759c00c6cbc68f646cd04"
+type-r@^3.0.8:
+  version "3.0.13"
+  resolved "https://registry.yarnpkg.com/type-r/-/type-r-3.0.13.tgz#e60fd9f4c91ba58520300af080cb003f0ed14f09"
+  integrity sha512-NUjOu/Vmd7xHV8cTNzSJR7+5ZOrkCwQkCaQmt9wxeDnj8gquZCMXicmLprPZiLZ8lr0jHCmyOHsJ2XD1TGzcNg==
   dependencies:
     isomorphic-fetch "*"
     tslib "*"
@@ -4936,9 +4938,10 @@ value-equal@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/value-equal/-/value-equal-0.4.0.tgz#c5bdd2f54ee093c04839d71ce2e4758a6890abc7"
 
-valuelink@Volicon/NestedLink:
-  version ""
-  resolved "https://codeload.github.com/Volicon/NestedLink/tar.gz/0105d461d33108d2ab2d97b8f8da6967878844d6"
+valuelink@^1.0.0:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/valuelink/-/valuelink-1.6.2.tgz#1d1c4909d92ca77e37b5d3ab78bd6e2cef9f68fb"
+  integrity sha512-Y7I9SNUfNH1fzu/NXM+4oHqSpks1sqZNTNdM0srOmM2irgYB1UciTZLB5DmSfmw+meeDQKRkMuJNkER861kOhg==
 
 valuelink@^2.0.5:
   version "2.0.5"
