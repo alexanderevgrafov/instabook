@@ -1,0 +1,60 @@
+ii  libapache2-mod-php                    1:7.0+35ubuntu6.1                          all          server-side, HTML-embedded scripting language (Apache 2 module) (default)
+ii  libapache2-mod-php7.0                 7.0.33-0ubuntu0.16.04.6                    amd64        server-side, HTML-embedded scripting language (Apache 2 module)
+ii  php-auth                              1.6.4-1build1                              all          Creating an authentication system
+ii  php-auth-sasl                         1.0.6-2build1                              all          Abstraction of various SASL mechanism responses
+ii  php-cgi                               1:7.0+35ubuntu6.1                          all          server-side, HTML-embedded scripting language (CGI binary) (default)
+ii  php-cli-prompt                        1.0.1+dfsg-1build1                         all          tiny helper prompting for user input
+ii  php-common                            1:35ubuntu6.1                              all          Common files for PHP packages
+ii  php-composer-semver                   1.2.0-1build1                              all          Semver library that offers utilities, version constraint parsing and
+ii  php-composer-spdx-licenses            1.1.2-1build1                              all          SPDX licenses list and validation library
+ii  php-crypt-chap                        1.5.0-1build1                              all          Generating CHAP packets
+ii  php-curl                              1:7.0+35ubuntu6.1                          all          CURL module for PHP [default]
+ii  php-db                                1.7.14-3build1                             all          PHP PEAR Database Abstraction Layer
+ii  php-gd                                1:7.0+35ubuntu6.1                          all          GD module for PHP [default]
+ii  php-gettext                           1.0.11-2build1                             all          read gettext MO files directly, without requiring anything other than PHP
+ii  php-imap                              1:7.0+35ubuntu6.1                          all          IMAP module for PHP [default]
+ii  php-intl                              1:7.0+35ubuntu6.1                          all          Internationalisation module for PHP [default]
+ii  php-json-schema                       1.6.1-1build1                              all          implementation of JSON schema
+ii  php-ldap                              1:7.0+35ubuntu6.1                          all          LDAP module for PHP [default]
+ii  php-log                               1.12.9-1build1                             all          Logging Framework
+ii  php-mail                              1.3.0-1                                    all          Class that provides multiple interfaces for sending emails
+ii  php-mail-mime                         1.10.0-2                                   all          PHP PEAR module for creating MIME messages
+ii  php-mail-mimedecode                   1.5.5-3build1                              all          Provides a class to decode mime messages
+ii  php-mbstring                          1:7.0+35ubuntu6.1                          all          MBSTRING module for PHP [default]
+ii  php-mcrypt                            1:7.0+35ubuntu6.1                          all          libmcrypt module for PHP [default]
+ii  php-mdb2                              2.5.0b5-1build1                            all          merge of the PEAR DB and Metabase php database abstraction layers
+ii  php-mysql                             1:7.0+35ubuntu6.1                          all          MySQL module for PHP [default]
+ii  php-net-ldap2                         2.2.0-1ubuntu1                             all          Object oriented interface for searching and manipulating LDAP-entries
+ii  php-net-ldap3                         1.0.3-1build1                              all          Object oriented interface for searching and manipulating LDAP entries
+ii  php-net-sieve                         1.3.4-2build1                              all          Handles talking to a sieve server
+ii  php-net-smtp                          1.7.1-1build1                              all          PHP PEAR module implementing SMTP protocol
+ii  php-net-socket                        1.0.14-1build1                             all          PHP PEAR Network Socket Interface module
+ii  php-pear                              1:1.10.1+submodules+notgz-6ubuntu0.1       all          PEAR Base System
+ii  php-phpseclib                         2.0.1-1build1                              all          implementations of an arbitrary-precision integer arithmetic library
+ii  php-pspell                            1:7.0+35ubuntu6.1                          all          pspell module for PHP [default]
+ii  php-soap                              1:7.0+35ubuntu6.1                          all          SOAP module for PHP [default]
+ii  php-symfony-console                   2.7.10-0ubuntu2                            all          run tasks from the command line
+ii  php-symfony-filesystem                2.7.10-0ubuntu2                            all          basic filesystem utilities
+ii  php-symfony-finder                    2.7.10-0ubuntu2                            all          find files and directories
+ii  php-symfony-process                   2.7.10-0ubuntu2                            all          execute commands in sub-processes
+ii  php-tcpdf                             6.0.093+dfsg-1ubuntu1                      all          PHP class for generating PDF files on-the-fly
+ii  php-xml                               1:7.0+35ubuntu6.1                          all          DOM, SimpleXML, WDDX, XML, and XSL module for PHP [default]
+ii  php7.0-cgi                            7.0.33-0ubuntu0.16.04.6                    amd64        server-side, HTML-embedded scripting language (CGI binary)
+ii  php7.0-cli                            7.0.33-0ubuntu0.16.04.6                    amd64        command-line interpreter for the PHP scripting language
+ii  php7.0-common                         7.0.33-0ubuntu0.16.04.6                    amd64        documentation, examples and common module for PHP
+ii  php7.0-curl                           7.0.33-0ubuntu0.16.04.6                    amd64        CURL module for PHP
+ii  php7.0-gd                             7.0.33-0ubuntu0.16.04.6                    amd64        GD module for PHP
+ii  php7.0-imap                           7.0.33-0ubuntu0.16.04.6                    amd64        IMAP module for PHP
+ii  php7.0-intl                           7.0.33-0ubuntu0.16.04.6                    amd64        Internationalisation module for PHP
+ii  php7.0-json                           7.0.33-0ubuntu0.16.04.6                    amd64        JSON module for PHP
+ii  php7.0-ldap                           7.0.33-0ubuntu0.16.04.6                    amd64        LDAP module for PHP
+ii  php7.0-mbstring                       7.0.33-0ubuntu0.16.04.6                    amd64        MBSTRING module for PHP
+ii  php7.0-mcrypt                         7.0.33-0ubuntu0.16.04.6                    amd64        libmcrypt module for PHP
+ii  php7.0-mysql                          7.0.33-0ubuntu0.16.04.6                    amd64        MySQL module for PHP
+ii  php7.0-opcache                        7.0.33-0ubuntu0.16.04.6                    amd64        Zend OpCache module for PHP
+ii  php7.0-pspell                         7.0.33-0ubuntu0.16.04.6                    amd64        pspell module for PHP
+ii  php7.0-readline                       7.0.33-0ubuntu0.16.04.6                    amd64        readline module for PHP
+ii  php7.0-soap                           7.0.33-0ubuntu0.16.04.6                    amd64        SOAP module for PHP
+ii  php7.0-xml                            7.0.33-0ubuntu0.16.04.6                    amd64        DOM, SimpleXML, WDDX, XML, and XSL module for PHP
+ii  phpmyadmin                            4:4.5.4.1-2ubuntu2.1                       all          MySQL web administration tool
+ii  vesta-php                             0.9.8-25                                   amd64        Vesta php-fpm
