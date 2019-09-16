@@ -14,7 +14,7 @@
     "watch": "webpack  --progress --colors --watch --env.develop",
     "build": "webpack  --progress --colors --env.develop",
     "prod": "webpack",
-    "server": "start tsc-watch --onSuccess \"node ./server/server/central.js\""
+    "server": "tsc-watch --onSuccess \"node ./server/server/central.js\""
   },
   "devDependencies": {
     "bootstrap": "^4.3.1",
